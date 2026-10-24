@@ -43,14 +43,17 @@ Adds `007_consolidate_integrity_guards.sql` to *your separate checkout*, leaving
 In PowerShell from the **separate copy**:
 
 ```powershell
-# Start a separate, throwaway database at port 55433 (not the existing 5432).
-docker run --name claimlens-refactor-test -d -p 127.0.0.1:55433:5432 `
-  -e POSTGRES_USER=claimlens -e POSTGRES_PASSWORD=ci_refactor_only `
-  -e POSTGRES_DB=claimlens pgvector/pgvector:pg17
+# Generate fresh disposable settings for each run. Do not save or commit them.
+$reviewDbPassword = [guid]::NewGuid().ToString('N')
+$env:SESSION_SECRET = [guid]::NewGuid().ToString('N') + [guid]::NewGuid().ToString('N')
+$env:SEED_DEMO_PASSWORD = 'ReviewA7' + [guid]::NewGuid().ToString('N')
+$env:DATABASE_URL = "postgresql://claimlens:${reviewDbPassword}@127.0.0.1:55433/claimlens"
 
-$env:DATABASE_URL='postgresql://claimlens:ci_refactor_only@127.0.0.1:55433/claimlens'
-$env:SESSION_SECRET='refactor-test-secret-not-for-production-12345'
-$env:SEED_DEMO_PASSWORD='RefactorDemoPassword12345'
+# Start a separate, throwaway database at port 55433 using temporary storage.
+docker run --name claimlens-refactor-test -d -p 127.0.0.1:55433:5432 `
+  --mount type=tmpfs,destination=/var/lib/postgresql/data,tmpfs-size=536870912 `
+  -e POSTGRES_USER=claimlens -e "POSTGRES_PASSWORD=$reviewDbPassword" `
+  -e POSTGRES_DB=claimlens pgvector/pgvector:pg17
 
 npm ci
 npm test
@@ -66,7 +69,7 @@ npm run build
 npm audit
 ```
 
-`docker run` may initially take a short time to report PostgreSQL ready. If `npm run doctor` reports the port unavailable, check `docker logs claimlens-refactor-test` and retry after it becomes healthy. The environment variables above are dummy values for the disposable database only; if your copied folder has `.env`, the exported variables should override it.
+`docker run` may initially take a short time to report PostgreSQL ready. If `npm run doctor` reports the port unavailable, check `docker logs claimlens-refactor-test` and retry after it becomes healthy. The environment variables above are freshly generated for the disposable database only; if your copied folder has `.env`, the exported variables should override it. Pass the same in-memory values to the app/test terminals; do not publish or save generated credentials in the repository.
 
 For **live HTTP regression**, start the app from this isolated copy in a new terminal with the **same three environment variables**:
 

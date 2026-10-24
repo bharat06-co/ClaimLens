@@ -2,9 +2,9 @@
 
 **Local review completed 24 October 2026.** Start with [current strict results and limitations](docs/DBMS_STRICT_COMPATIBILITY_RESULTS.md), the [separate change log](CHANGELOG_REFACTOR_REVIEW.md) and [Level 3 mapping](docs/DBMS_REFACTOR_REQUIREMENTS.md). This branch has not been merged, pushed or applied to the owner's existing database. Source baseline remains audited main `d01824ffa6dc946a65d232934e35e44ff6d9b82e`.
 
-Validated counts: 16 tables retained, 21→17 triggers, 20→15 trigger functions. Unit/static 17/17; integrity 38/38; existing production HTTP 78/78 plus 19 extra assertions; targeted guards 41/41; SQL concurrency 5/5; migration safety 5/5; clean migrations 7/7; smoke/typecheck/build passed; npm audit zero vulnerabilities. Direct SQL error precedence/upsert differences are explicitly documented in the results.
+Validated strict counts: 16 tables retained; 21 to 18 triggers; 20 to 16 trigger functions. Unit/static 18/18; integrity 38/38; production HTTP 78/78 plus 19 extra assertions; guard cases 47/47; strict SQL comparisons 6/6; SQL concurrency 5/5; migration safety 5/5; clean migrations 7/7; smoke/typecheck/build passed; dependency audit zero vulnerabilities. Both original decision INSERT trigger definitions and SQL error outcomes are preserved.
 
-To reproduce, follow the disposable setup in `docs/DBMS_REFACTOR_REVIEW.md` with the stated dummy environment variables and port **55433**. Install locked dependencies with `npm ci`. After the original checks, also run:
+To reproduce, follow the disposable setup in `docs/DBMS_REFACTOR_REVIEW.md` with fresh per-run environment settings and port **55433**. Install locked dependencies with `npm ci`. After the original checks, also run:
 
 ```powershell
 $env:REVIEW_STAGE='final'

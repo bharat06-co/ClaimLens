@@ -1,5 +1,12 @@
 # Refactor review change log — 24 October 2026
 
+## GitHub preparation
+
+- Confirmed corrected runtime code/tests are already committed at `fc19dc6` on `codex/dbms-refactor-review`; verified saved strict SQL and full regression evidence without rerunning migrations, seeding or starting a database.
+- Checked tracked/staged paths, database-dump signatures and recognizable secret-token patterns. Private environment files, dumps, runtime caches and generated credential files are excluded. Baseline `.env.example`, CI and test fixtures retain public template/test settings; no new fixed credentials are required by the review setup guide.
+- Replaced the review guide's fixed disposable configuration examples with fresh per-run values kept in memory. Corrected a stale README paragraph that still displayed the rejected candidate's counts: the current candidate has 18 triggers, 16 trigger functions, 18 unit/static tests and 47 guard cases.
+- Added a GitHub handoff note and exported the exact committed-file lists. No runtime source, migration, test behavior, existing database, main branch or remote repository changed during this preparation.
+
 ## Strict decision-insert compatibility follow-up
 
 - Revised unadopted migration 007 to leave the original `validate_deciding_officer()` BEFORE INSERT trigger/function and `apply_claim_decision()` AFTER INSERT trigger/function unchanged. Removed their proposed consolidation. Final runtime counts: **18 triggers / 16 trigger functions**, versus audited baseline 21/20 and the first proposal's 17/15.

@@ -1,0 +1,16 @@
+{
+  "passed": 5,
+  "tests": [
+    "007 applies in a fresh nonpublic schema",
+    "transaction rollback restores all original trigger bindings",
+    "late migration error leaves no partially consolidated schema",
+    "two concurrent fresh-install runners apply each of seven migrations exactly once",
+    "fresh-install rerun skips all seven migrations"
+  ],
+  "concurrentRunnerOutput": [
+    "Applied 001_init.sql\nApplied 002_repair_lifecycle.sql\nApplied 003_claim_state_integrity.sql\nApplied 004_temporal_integrity.sql\nApplied 005_audit_integrity.sql\nApplied 006_warranty_validation.sql\nApplied 007_consolidate_integrity_guards.sql\n",
+    "Already applied: 001_init.sql\nAlready applied: 002_repair_lifecycle.sql\nAlready applied: 003_claim_state_integrity.sql\nAlready applied: 004_temporal_integrity.sql\nAlready applied: 005_audit_integrity.sql\nAlready applied: 006_warranty_validation.sql\nAlready applied: 007_consolidate_integrity_guards.sql\n"
+  ],
+  "temporaryDatabase": "claimlens_review_race_1792845050511",
+  "storage": "Same explicitly disposable tmpfs container; destroyed at end of review"
+}

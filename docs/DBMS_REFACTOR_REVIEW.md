@@ -1,6 +1,6 @@
 # CLAIMLENS — DBMS refactor (separate review copy)
 
-**Source baseline:** `bharat06-co/ClaimLens`, audited `main` at `d01824ffa6dc946a65d232934e35e44ff6d9b82e` (24 October 2026). The six existing migrations, the audited 78-check production HTTP evidence and passing GitHub CI remain the comparison baseline. **Follow-up local validation is complete:** migration 007, smoke/integrity/API/semantic/concurrency checks, typecheck, optimized build and dependency audit passed in a separate Windows checkout and disposable PostgreSQL/pgvector database. See [the complete results](DBMS_REFACTOR_RESULTS.md), [change log](../CHANGELOG_REFACTOR_REVIEW.md) and [requirements mapping](DBMS_REFACTOR_REQUIREMENTS.md). This does not authorize a merge or applying 007 to the owner's existing database.
+**Source baseline:** `bharat06-co/ClaimLens`, audited `main` at `d01824ffa6dc946a65d232934e35e44ff6d9b82e` (24 October 2026). The six existing migrations, the audited 78-check production HTTP evidence and passing GitHub CI remain the comparison baseline. **Follow-up local validation is complete:** migration 007, smoke/integrity/API/semantic/concurrency checks, typecheck, optimized build and dependency audit passed in a separate Windows checkout and disposable PostgreSQL/pgvector database. See [the current strict results](DBMS_STRICT_COMPATIBILITY_RESULTS.md), [change log](../CHANGELOG_REFACTOR_REVIEW.md) and [requirements mapping](DBMS_REFACTOR_REQUIREMENTS.md). This does not authorize a merge or applying 007 to the owner's existing database.
 
 ## Scope and actual reduction
 
@@ -9,18 +9,18 @@ Adds `007_consolidate_integrity_guards.sql` to *your separate checkout*, leaving
 | Metric | Before | Proposed after | Reduction |
 |---|---:|---:|---:|
 | Application tables | 16 | 16 | 0 |
-| User-defined triggers | 21 | 17 | **4 (19%)** |
-| Distinct trigger functions | 20 | 15 | **5 (25%)** |
+| User-defined triggers | 21 | 18 | **3 (14.29%)** |
+| Distinct trigger functions | 20 | 16 | **4 (20%)** |
 | Stored warranty-registration function | 1 | 1 | 0 |
 | Vector index, dimension and retrieval strategy | HNSW, 384 | unchanged | 0 |
 | Historical migration files retained | 6 | 6 + 1 incremental | +1 |
 
-**This is runtime structural simplification, not fewer total lines in Git history**: the new migration adds about 142 lines because migrations must document changes. Preserving migration history is safer than editing old schema files.
+**This is runtime structural simplification, not fewer total lines in Git history**: the new migration adds 121 lines because migrations must document changes. Preserving migration history is safer than editing old schema files.
 
 ## Five changes
 
 1. **Assignment:** `enforce_assignment_integrity()` also checks that the assigned user is an active officer; retire `validate_officer_assignment()` and its trigger. Original messages and one-assignment rule retained.
-2. **Decision:** `apply_claim_decision()` checks the officer's active role inside the same atomic `AFTER INSERT` trigger already responsible for claim status, repair creation and audit; retire a separate `BEFORE INSERT` officer-role trigger. Invalid inserts still abort. **Caveat:** when *multiple* independent errors exist, the order in which PostgreSQL reports them may differ.
+2. **Decision compatibility retained:** keep the original `validate_deciding_officer()` BEFORE INSERT function/trigger and `apply_claim_decision()` AFTER INSERT function/trigger unchanged. This preserves the original officer error before CHECK constraints and even on conflicting `ON CONFLICT DO NOTHING` inserts. The earlier proposal to fold validation into AFTER INSERT was rejected; both old differences are reproduced and resolved in the strict review.
 3. **Warranty:** `validate_warranty()` also prevents updates to historical warranty facts once claims exist; retire the standalone `preserve_claim_warranty()` trigger. Inclusive dates and policy/manufacturer validity stay in one function.
 4. **Repairs:** `enforce_repair_integrity()` checks legal status transitions, timestamp changes and immutable repair identity as well as eligibility; retire `check_repair_transition()` trigger. Audit remains its own `AFTER UPDATE` trigger.
 5. **Append-only history:** Decisions and audit events share `prevent_history_rewrite()` while keeping their distinct historical error messages. The two append-only triggers remain in place.
@@ -97,6 +97,6 @@ docker rm -f claimlens-refactor-test
 - Static JavaScript tests and package checks were run in the assistant sandbox, **not** PostgreSQL integration, semantic retrieval or UI tests.
 - Container has no PostgreSQL/pgvector server and cannot reach your Windows Docker instance. Thus full compatibility is *proposed, not yet demonstrated*.
 
-**Viva consequence:** fewer distinct trigger routines to learn (~25% reduction). The DBMS subject matter remains medium-to-hard: it still covers database transactions, state transitions, triggers, indexes, constraints and pgvector. This is not a verified 25% reduction in the difficulty of your viva.
+**Viva consequence:** fewer distinct trigger routines to learn (20% reduction). The DBMS subject matter remains medium-to-hard: it still covers database transactions, state transitions, triggers, indexes, constraints and pgvector. This is not a verified 20% reduction in the difficulty of your viva.
 
-The original statements above describe the overlay author's environment, not the completed local validation. The original input files are preserved in the separate local review lab. The final evidence demonstrates runtime reduction while retaining application behavior for the executed tests. It also records the direct-SQL multi-error/`ON CONFLICT DO NOTHING` compatibility differences, which must not be hidden behind a blanket assertion of unchanged behavior.
+The original statements above describe the overlay author's environment, not the completed local validation. The original input files are preserved in the separate local review lab. The final evidence demonstrates runtime reduction while retaining application behavior for the executed tests. The strict follow-up preserves original decision INSERT definitions and resolves both direct-SQL differences from the rejected candidate. See the current results and `strict/direct-sql-comparison.json` evidence.

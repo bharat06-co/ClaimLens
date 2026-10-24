@@ -1,0 +1,10 @@
+{
+  "command": [
+    "node",
+    "scripts/review-sql-compatibility.mjs",
+    "--install-baseline"
+  ],
+  "exitCode": 0,
+  "seconds": 0.72,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
+const evidence=process.env.REVIEW_EVIDENCE_DIR || 'docs/refactor-evidence';
 
 const url = new URL(process.env.DATABASE_URL || '');
 assert.equal(url.hostname, '127.0.0.1');
@@ -47,8 +48,8 @@ try {
     indexes: definitions.indexes.length, views: definitions.views.length,
     rows, relationalDefinitionsSha256: hash(definitions), definitions, triggerDefinitions: triggers,
     functionDefinitions: functions, migrations };
-  mkdirSync('docs/refactor-evidence', { recursive: true });
-  writeFileSync(`docs/refactor-evidence/${stage}-snapshot.json`, JSON.stringify(result, null, 2));
+  mkdirSync(evidence, { recursive: true });
+  writeFileSync(`${evidence}/${stage}-snapshot.json`, JSON.stringify(result, null, 2));
   console.log(JSON.stringify({ ...result, rows: Object.fromEntries(Object.entries(rows).map(([k,v]) => [k,v.count])),
     definitions: undefined, triggerDefinitions: undefined, functionDefinitions: undefined }, null, 2));
 } finally {

@@ -1,0 +1,6 @@
+Applied baseline 001_init.sql
+Applied baseline 002_repair_lifecycle.sql
+Applied baseline 003_claim_state_integrity.sql
+Applied baseline 004_temporal_integrity.sql
+Applied baseline 005_audit_integrity.sql
+Applied baseline 006_warranty_validation.sql

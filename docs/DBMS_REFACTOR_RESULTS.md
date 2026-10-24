@@ -1,5 +1,7 @@
 # CLAIMLENS database refactor validation — 24 October 2026
 
+> **Historical first candidate, superseded.** The strict-compatibility follow-up retains the original BEFORE officer validation: **18 triggers, 16 trigger functions**, 18 unit/static tests, 47 guard cases, and both prior SQL differences resolved. Read [the current strict review](DBMS_STRICT_COMPATIBILITY_RESULTS.md) and updated requirements matrix. The 17/15 counts and SQL caveat below describe local commit `23ec534`, not the corrected candidate.
+
 ## Verdict
 
 **Suitable for adoption in the current audited application, with the direct-SQL compatibility caveat below.** All requested local regression gates passed in an isolated environment. No application or stored-data regression was reproduced. This is a review candidate, not a migration applied to the user's database, a main-branch update, or a guarantee of zero defects under all conditions.

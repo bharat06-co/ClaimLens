@@ -1,0 +1,48 @@
+PASS active unassigned officer cannot decide
+PASS customer cannot decide
+PASS inactive officer cannot decide
+PASS inactive decision leaves no row, status, repair or audit effect
+PASS submitted unassigned claim cannot be decided
+PASS downstream audit failure aborts the decision statement
+PASS downstream failure rolls back inserted decision, repair and claim transition
+PASS one invalid row aborts a multirow decision insert
+PASS failed multirow insert leaves neither row or trigger side effects
+PASS approval produces exactly one decision, repair and decision audit
+PASS rejection produces decision and audit without a repair
+PASS duplicate approval cannot create a second repair
+PASS decisions append-only on UPDATE
+PASS audits append-only on UPDATE
+PASS decisions append-only on DELETE
+PASS audits append-only on DELETE
+PASS claimed warranty preserves id
+PASS claimed warranty preserves product_id
+PASS claimed warranty preserves policy_id
+PASS claimed warranty preserves start_date
+PASS claimed warranty preserves end_date
+PASS claimed warranty preserves created_at
+PASS claimed warranty permits no-op factual update
+PASS warranty void flag remains editable
+PASS repair open -> open: state, timestamp and audit
+PASS repair open -> in_progress: state, timestamp and audit
+PASS repair open -> completed: prohibited
+PASS repair open -> cancelled: state, timestamp and audit
+PASS repair in_progress -> open: prohibited
+PASS repair in_progress -> in_progress: state, timestamp and audit
+PASS repair in_progress -> completed: state, timestamp and audit
+PASS repair in_progress -> cancelled: state, timestamp and audit
+PASS repair completed -> open: prohibited
+PASS repair completed -> in_progress: prohibited
+PASS repair completed -> completed: state, timestamp and audit
+PASS repair completed -> cancelled: prohibited
+PASS repair cancelled -> open: prohibited
+PASS repair cancelled -> in_progress: prohibited
+PASS repair cancelled -> completed: prohibited
+PASS repair cancelled -> cancelled: state, timestamp and audit
+PASS repair cannot change identity together with a valid transition
+PASS invalid-officer-and-short-reason: original officer error precedes constraint/conflict handling
+PASS invalid-officer-and-short-reason: no decision/workflow side effects
+PASS invalid-officer-and-duplicate-do-nothing: original officer error precedes constraint/conflict handling
+PASS invalid-officer-and-duplicate-do-nothing: no decision/workflow side effects
+PASS valid officer still receives reason CHECK violation
+PASS valid officer duplicate DO NOTHING still returns zero rows
+{"passed":47,"observations":[{"variant":"invalid-officer-and-short-reason","code":"P0001","message":"Decision requires an active officer"},{"variant":"invalid-officer-and-duplicate-do-nothing","code":"P0001","message":"Decision requires an active officer"}]}

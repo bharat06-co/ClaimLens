@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
+const evidence=process.env.REVIEW_EVIDENCE_DIR || 'docs/refactor-evidence';
 
 const url=new URL(process.env.DATABASE_URL || '');
 assert.equal(url.hostname,'127.0.0.1'); assert.equal(url.port,'55433');
@@ -83,8 +84,8 @@ try {
   assert.deepEqual(rolled,{status:'in_review',decisions:0,repairs:0});
   pass('explicit transaction rollback removes approval and generated repair');
 
-  mkdirSync('docs/refactor-evidence',{recursive:true});
-  writeFileSync(`docs/refactor-evidence/${stage}-concurrency.json`,JSON.stringify({passed:tests.length,tests,
+  mkdirSync(evidence,{recursive:true});
+  writeFileSync(`${evidence}/${stage}-concurrency.json`,JSON.stringify({passed:tests.length,tests,
     isolation:'READ COMMITTED',coordination:'Observed pg_stat_activity Lock before releasing winner',
     fixtures:'Synthetic committed rows retained only in disposable tmpfs database'},null,2));
   console.log(`PASS ${tests.length} concurrency/transaction cases`);

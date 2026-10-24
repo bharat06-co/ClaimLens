@@ -1,0 +1,18 @@
+{
+  "artifact": "Locally validated CLAIMLENS isolated DBMS refactor review",
+  "inputZip": "ClaimLens_Refactor_Patch.zip",
+  "inputZipSha256": "8f7169f0f6ccd7bbcc6a97e92efb8c01f57e01bbeb51ecfc9a21e1fd379d2301",
+  "sourceRepo": "https://github.com/bharat06-co/ClaimLens",
+  "sourceCommit": "d01824ffa6dc946a65d232934e35e44ff6d9b82e",
+  "reviewBranch": "codex/dbms-refactor-review",
+  "migration007UnchangedFromInput": true,
+  "migration007Sha256": "b26a9589325b2f855563057db4facb613f7d3ea584091878af637f774aa0198c",
+  "allRequestedLocalGatesPassed": true,
+  "reviewSummary": "docs/refactor-evidence/review-summary.json",
+  "results": "docs/DBMS_REFACTOR_RESULTS.md",
+  "changeLog": "CHANGELOG_REFACTOR_REVIEW.md",
+  "inputManifest": "docs/refactor-evidence/input-overlay-manifest.json",
+  "candidateRemoteCI": "Not run; local commit only",
+  "existingDatabaseMigrated": false,
+  "strictDirectSqlErrorEquivalence": false
+}

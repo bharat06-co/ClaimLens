@@ -4,6 +4,7 @@ import { readFileSync,readdirSync,mkdirSync,writeFileSync } from 'node:fs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { Pool } from 'pg';
+const evidence=process.env.REVIEW_EVIDENCE_DIR || 'docs/refactor-evidence';
 const url=new URL(process.env.DATABASE_URL || '');
 assert.equal(url.hostname,'127.0.0.1');assert.equal(url.port,'55433');
 const pool=new Pool({connectionString:url.href});const db=await pool.connect();
@@ -17,7 +18,7 @@ try {
   for(const name of readdirSync('db/migrations').filter(f=>/^00[1-6]_.*\.sql$/.test(f)).sort()) await db.query(sql(name));
   assert.deepEqual(await count(),{triggers:21,functions:20});
   await db.query('SAVEPOINT pre007');await db.query(sql('007_consolidate_integrity_guards.sql'));
-  assert.deepEqual(await count(),{triggers:17,functions:15});pass('007 applies in a fresh nonpublic schema');
+  assert.deepEqual(await count(),{triggers:18,functions:16});pass('007 applies in a fresh nonpublic schema');
   await db.query('ROLLBACK TO SAVEPOINT pre007');
   assert.deepEqual(await count(),{triggers:21,functions:20});pass('transaction rollback restores all original trigger bindings');
   let failed=false;
@@ -45,8 +46,8 @@ try {
     const again=await run(process.execPath,['--import','tsx','scripts/migrate.ts'],{env});
     assert.equal((again.stdout.match(/^Already applied: /gm)||[]).length,7);pass('fresh-install rerun skips all seven migrations');
   }finally{await race.end();}
-  mkdirSync('docs/refactor-evidence',{recursive:true});
-  writeFileSync('docs/refactor-evidence/migration-safety.json',JSON.stringify({passed:tests.length,tests,
+  mkdirSync(evidence,{recursive:true});
+  writeFileSync(`${evidence}/migration-safety.json`,JSON.stringify({passed:tests.length,tests,
     concurrentRunnerOutput:runners.map(r=>r.stdout),temporaryDatabase:database,
     storage:'Same explicitly disposable tmpfs container; destroyed at end of review'},null,2));
   console.log(`PASS ${tests.length} migration safety cases`);

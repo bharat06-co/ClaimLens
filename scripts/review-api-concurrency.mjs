@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { mkdirSync,writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
+const evidence=process.env.REVIEW_EVIDENCE_DIR || 'docs/refactor-evidence';
 const url=new URL(process.env.DATABASE_URL || '');
 assert.equal(url.hostname,'127.0.0.1');assert.equal(url.port,'55433');
 const base=process.env.AUDIT_BASE_URL;
@@ -57,8 +58,8 @@ try {
   await pool.query('UPDATE app_users SET is_active=false WHERE id=$1',[officer2]);
   await expect('deactivated second officer session cannot mutate',`/api/claims/${id}/decision`,decision,401,other);
   await expect('deactivated second officer cannot authenticate','/api/auth/login',{email,password:process.env.SEED_DEMO_PASSWORD},401);
-  mkdirSync('docs/refactor-evidence',{recursive:true});
-  writeFileSync(`docs/refactor-evidence/${process.env.REVIEW_STAGE}-api-extra.json`,JSON.stringify({passed:tests.length,tests,claimId:id,
+  mkdirSync(evidence,{recursive:true});
+  writeFileSync(`${evidence}/${process.env.REVIEW_STAGE}-api-extra.json`,JSON.stringify({passed:tests.length,tests,claimId:id,
     fixtures:'Synthetic rows retained in disposable tmpfs DB only'},null,2));
   console.log(`PASS ${tests.length} additional real HTTP assertions`);
 }finally{await pool.end();}

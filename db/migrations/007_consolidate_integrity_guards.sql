@@ -25,32 +25,11 @@ END $$;
 DROP TRIGGER trg_validate_officer_assignment ON claim_assignments;
 DROP FUNCTION validate_officer_assignment();
 
--- 2. A claim decision is validated and applied in its existing atomic AFTER
---    INSERT trigger. An exception rolls back the inserted decision and effects.
-CREATE OR REPLACE FUNCTION apply_claim_decision() RETURNS trigger
-LANGUAGE plpgsql AS $$
-DECLARE assigned_officer uuid; claim_status claim_state;
-BEGIN
- IF NOT EXISTS(SELECT 1 FROM app_users WHERE id=NEW.officer_id AND role='officer' AND is_active) THEN
-  RAISE EXCEPTION 'Decision requires an active officer';
- END IF;
- SELECT officer_id INTO assigned_officer FROM claim_assignments WHERE claim_id=NEW.claim_id;
- SELECT status INTO claim_status FROM warranty_claims WHERE id=NEW.claim_id FOR UPDATE;
- IF assigned_officer IS DISTINCT FROM NEW.officer_id OR claim_status <> 'in_review' THEN
-  RAISE EXCEPTION 'Only the assigned officer may decide an in-review claim';
- END IF;
- UPDATE warranty_claims SET status=NEW.verdict::text::claim_state,updated_at=now() WHERE id=NEW.claim_id;
- IF NEW.verdict='approved' THEN
-  INSERT INTO repair_orders(claim_id,notes)
-  VALUES(NEW.claim_id,'Created automatically following approval');
- END IF;
- INSERT INTO audit_events(event_type,entity_id,actor_id,details)
- VALUES('claim_decision',NEW.claim_id,NEW.officer_id,
-   jsonb_build_object('verdict',NEW.verdict,'reason',NEW.reason));
- RETURN NEW;
-END $$;
-DROP TRIGGER trg_validate_deciding_officer ON claim_decisions;
-DROP FUNCTION validate_deciding_officer();
+-- 2. Preserve BOTH original decision functions and trigger bindings unchanged.
+--    trg_validate_deciding_officer remains BEFORE INSERT, so authorization
+--    precedes CHECK/UNIQUE handling and runs even with ON CONFLICT DO NOTHING.
+--    trg_apply_claim_decision remains AFTER INSERT for atomic workflow effects.
+--    Do not replace either function or drop the BEFORE trigger in this migration.
 
 -- 3. Warranty date/manufacturer validation now also protects referenced
 --    warranty facts. The former pre-update preservation guard is folded in.

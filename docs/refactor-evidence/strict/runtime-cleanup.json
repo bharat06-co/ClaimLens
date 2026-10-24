@@ -1,0 +1,9 @@
+{
+  "storage": "tmpfs; no shared volume",
+  "dockerMayBeClosed": true,
+  "reviewContainerId": "addace68a4c1ce5041f6a2faf466f2fb89459d31a81caefd9e06aefbf4addebc",
+  "reviewContainerRemoved": "/claimlens-strict-review-20261024",
+  "privateDatabaseTargeted": false,
+  "reviewAppStopped": "localhost:3004",
+  "date": "2026-10-24"
+}

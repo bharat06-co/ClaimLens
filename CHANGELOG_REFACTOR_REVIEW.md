@@ -1,5 +1,17 @@
 # Refactor review change log — 24 October 2026
 
+## Strict decision-insert compatibility follow-up
+
+- Revised unadopted migration 007 to leave the original `validate_deciding_officer()` BEFORE INSERT trigger/function and `apply_claim_decision()` AFTER INSERT trigger/function unchanged. Removed their proposed consolidation. Final runtime counts: **18 triggers / 16 trigger functions**, versus audited baseline 21/20 and the first proposal's 17/15.
+- Reproduced both earlier differences using baseline 001–006, hash-verified rejected 007 and corrected 007 in a temporary schema. Six cases/18 executions verify customer/inactive/valid officers, CHECK error precedence and conflicting `ON CONFLICT DO NOTHING`. Corrected SQLSTATEs/messages/row counts exactly match baseline, with no workflow effects.
+- Added `scripts/review-sql-compatibility.mjs`; retained rejected SQL as an explicitly historical test fixture so replay works without Git history. The original overlay SHA is provenance only; corrected migration 007 intentionally differs.
+- Added a static trigger-preservation test (18 total unit/static tests), strengthened the runtime verifier for BEFORE timing/18 triggers/16 functions, and expanded guard assertions from 41 to 47 with strict error checks and valid-officer controls. Added optional `REVIEW_EVIDENCE_DIR` routing to the independent tools so prior evidence is preserved.
+- Reran smoke, 38 integrity, 47 guard, 6 strict comparison, 5 SQL concurrency, 5 migration-safety, 7 clean-migration and 97 production HTTP assertions, ten invariants/viva queries, typecheck/build and dependency audit. All passed; zero vulnerabilities. All 27 fresh seed rows and relational definitions were preserved across migration 007.
+- Rechecked all 17 guideline sections. Technical features retained; human team/contribution/originality/viva conditions remain pending. New current report: `docs/DBMS_STRICT_COMPATIBILITY_RESULTS.md`; raw/current evidence under `docs/refactor-evidence/strict/`. Earlier evidence is historical; no new manual browser run is claimed.
+- Used only fresh tmpfs container `claimlens-strict-review-20261024`, port 55433; stopped review app/removed disposable container afterward. Existing database/volume/secrets and main untouched. No push or merge.
+
+## Initial review (historical)
+
 Base: audited GitHub main `d01824ffa6dc946a65d232934e35e44ff6d9b82e`.
 Review branch: `codex/dbms-refactor-review`, in a separate checkout.
 

@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
 const sql = readFileSync('db/migrations/007_consolidate_integrity_guards.sql', 'utf8');
+const originalDecisionSql = readFileSync('db/migrations/001_init.sql', 'utf8') + readFileSync('db/migrations/005_audit_integrity.sql', 'utf8');
 const baseline = {
   '001_init.sql': '9cdb353cc6392dab364ad247d362f00150d3ae0f2eb5e14c3a801258a86fca05',
   '002_repair_lifecycle.sql': '39bdca992cb160d50f43643cfefe242a801dc729ab30cbb4322aa5466052e505',
@@ -30,14 +31,19 @@ test('refactor leaves table/view/index definitions and data untouched', () => {
 test('refactor retains identity, authorization, dates, state transitions, audits', () => {
   for (const rule of [
     /Assigned user is not an active officer/,
-    /Decision requires an active officer/,
     /Claim warranty facts are immutable/,
     /Warranty dates must match the purchase and inclusive policy coverage/,
     /A repair must start open for an approved, decided claim/,
     /Invalid repair order status transition/,
     /Final claim decisions are immutable/,
     /Audit events are immutable/,
-    /Created automatically following approval/,
-    /jsonb_build_object\('verdict'/,
   ]) assert.match(sql,rule);
+  for (const rule of [/Decision requires an active officer/, /Created automatically following approval/, /jsonb_build_object\('verdict'/])
+    assert.match(originalDecisionSql,rule);
+});
+
+test('refactor preserves original BEFORE authorization and AFTER decision routines', () => {
+  assert.match(originalDecisionSql, /CREATE TRIGGER trg_validate_deciding_officer BEFORE INSERT ON claim_decisions/);
+  assert.doesNotMatch(sql, /(?:CREATE\s+(?:OR\s+REPLACE\s+)?|DROP\s+)FUNCTION\s+(?:validate_deciding_officer|apply_claim_decision)\s*\(/i);
+  assert.doesNotMatch(sql, /DROP\s+TRIGGER\s+(?:trg_validate_deciding_officer|trg_apply_claim_decision)\b/i);
 });

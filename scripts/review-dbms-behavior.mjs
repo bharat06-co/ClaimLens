@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
+const evidence=process.env.REVIEW_EVIDENCE_DIR || 'docs/refactor-evidence';
 
 const url = new URL(process.env.DATABASE_URL || '');
 assert.equal(url.hostname, '127.0.0.1'); assert.equal(url.port, '55433');
@@ -117,7 +118,8 @@ try {
   }
   await reject('repair cannot change identity together with a valid transition',()=>db.query(`UPDATE repair_orders SET status='in_progress',id=gen_random_uuid() WHERE claim_id=$1`,[inReview]),/identity and claim are immutable/);
 
-  // Measure, rather than hide, BEFORE -> AFTER error precedence differences.
+  // Strict compatibility: both formerly divergent SQL statements must fail
+  // with the exact original BEFORE-trigger SQLSTATE and message.
   for(const variant of ['invalid-officer-and-short-reason','invalid-officer-and-duplicate-do-nothing']) {
     await db.query('SAVEPOINT precedence');
     let outcome;
@@ -129,8 +131,19 @@ try {
     } catch(e) { outcome={code:e.code,message:e.message}; }
     await db.query('ROLLBACK TO SAVEPOINT precedence'); await db.query('RELEASE SAVEPOINT precedence');
     observations.push({variant,...outcome});
+    assert.deepEqual(outcome,{code:'P0001',message:'Decision requires an active officer'});
+    pass(`${variant}: original officer error precedes constraint/conflict handling`);
+    assert.deepEqual(await state(variant==='invalid-officer-and-short-reason'?multiBad:inReview),
+      variant==='invalid-officer-and-short-reason'?{status:'in_review',decisions:0,repairs:0,audits:0}:{status:'approved',decisions:1,repairs:1,audits:1});
+    pass(`${variant}: no decision/workflow side effects`);
   }
-  mkdirSync('docs/refactor-evidence',{recursive:true});
-  writeFileSync(`docs/refactor-evidence/${stage}-behavior.json`,JSON.stringify({passed:tests.length,tests,observations,mutations:'ROLLED BACK'},null,2));
+  await reject('valid officer still receives reason CHECK violation',()=>db.query(
+    `INSERT INTO claim_decisions(claim_id,officer_id,verdict,reason) VALUES($1,$2,'approved','short')`,
+    [multiBad,sample.officer_id]),/reason_check/,'23514');
+  const noOp=await db.query(`INSERT INTO claim_decisions(claim_id,officer_id,verdict,reason)
+    VALUES($1,$2,'approved','REVIEW valid conflicting duplicate decision') ON CONFLICT(claim_id) DO NOTHING`,[inReview,sample.officer_id]);
+  assert.equal(noOp.rowCount,0);pass('valid officer duplicate DO NOTHING still returns zero rows');
+  mkdirSync(evidence,{recursive:true});
+  writeFileSync(`${evidence}/${stage}-behavior.json`,JSON.stringify({passed:tests.length,tests,observations,mutations:'ROLLED BACK'},null,2));
   console.log(JSON.stringify({passed:tests.length,observations}));
 } finally { await db.query('ROLLBACK'); db.release(); await pool.end(); }

@@ -1,0 +1,16 @@
+
+> claimlens@1.0.0 db:seed
+> node scripts/doctor.mjs && tsx scripts/seed.ts
+
+PASS DATABASE_URL includes a host, user, password and database
+PASS SESSION_SECRET configured
+PASS SEED_DEMO_PASSWORD configured
+PASS PostgreSQL TCP port reachable
+Note: Port reachability does not verify credentials or migrations; run npm run db:migrate and npm run db:smoke.
+Embedding policy: Laptop Protection Warranty (first run downloads the model)
+{ documentId: '1c36c2e8-03ba-435c-be9f-9682f71a3c04', chunkCount: 3 }
+Embedding policy: Audio Product Limited Warranty (first run downloads the model)
+{ documentId: 'fb09b8b3-90f0-4088-920e-3585ecbd3cfc', chunkCount: 3 }
+Sample claim created: b7c1aace-4a44-4649-b92f-d3f1acbcd973
+Seed complete. Demo accounts: customer@claimlens.local officer@claimlens.local
+Both demo accounts use the SEED_DEMO_PASSWORD value from your .env.

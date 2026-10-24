@@ -1,0 +1,6 @@
+PASS overlapping assignments serialize to one assignment
+PASS overlapping approval/rejection has one decision and one repair/audit
+PASS waiting repair completion sees committed in-progress state and two audits
+PASS competing terminal repair transitions cannot overwrite the winner
+PASS explicit transaction rollback removes approval and generated repair
+PASS 5 concurrency/transaction cases

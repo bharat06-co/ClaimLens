@@ -1,0 +1,100 @@
+{
+  "cases": 6,
+  "attempts": 18,
+  "baseline": [
+    {
+      "case": "customer-short-reason",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "customer-conflicting-do-nothing",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "inactive-short-reason",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "inactive-conflicting-do-nothing",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "valid-short-reason",
+      "code": "23514",
+      "message": "new row for relation \"claim_decisions\" violates check constraint \"claim_decisions_reason_check\""
+    },
+    {
+      "case": "valid-conflicting-do-nothing",
+      "rows": 0
+    }
+  ],
+  "previous": [
+    {
+      "case": "customer-short-reason",
+      "code": "23514",
+      "message": "new row for relation \"claim_decisions\" violates check constraint \"claim_decisions_reason_check\""
+    },
+    {
+      "case": "customer-conflicting-do-nothing",
+      "rows": 0
+    },
+    {
+      "case": "inactive-short-reason",
+      "code": "23514",
+      "message": "new row for relation \"claim_decisions\" violates check constraint \"claim_decisions_reason_check\""
+    },
+    {
+      "case": "inactive-conflicting-do-nothing",
+      "rows": 0
+    },
+    {
+      "case": "valid-short-reason",
+      "code": "23514",
+      "message": "new row for relation \"claim_decisions\" violates check constraint \"claim_decisions_reason_check\""
+    },
+    {
+      "case": "valid-conflicting-do-nothing",
+      "rows": 0
+    }
+  ],
+  "revised": [
+    {
+      "case": "customer-short-reason",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "customer-conflicting-do-nothing",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "inactive-short-reason",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "inactive-conflicting-do-nothing",
+      "code": "P0001",
+      "message": "Decision requires an active officer"
+    },
+    {
+      "case": "valid-short-reason",
+      "code": "23514",
+      "message": "new row for relation \"claim_decisions\" violates check constraint \"claim_decisions_reason_check\""
+    },
+    {
+      "case": "valid-conflicting-do-nothing",
+      "rows": 0
+    }
+  ],
+  "strictMatchesBaseline": true,
+  "bothPreviouslyReportedDifferencesReproduced": true,
+  "originalDecisionDefinitionsUnchanged": true,
+  "workflowRowsUnchangedAfterEveryCase": true,
+  "mutations": "ROLLED BACK"
+}

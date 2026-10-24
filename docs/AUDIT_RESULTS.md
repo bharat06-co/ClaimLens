@@ -1,5 +1,7 @@
 # CLAIMLENS end-to-end audit
 
+**Follow-up, 24 October 2026:** The first real GitHub Actions run exposed a CI-only configuration bug: the doctor required a `.env` file even when all settings were supplied through the environment. It is corrected locally, with **14/14 unit/setup regressions and TypeScript passing**. The original run's DB/build stages were skipped after the configuration failure. A successful remote rerun is **not yet verified**; the user will commit/push through GitHub Desktop. The results below are the original 22 October local audit, not a claim that GitHub CI passed. The original share ZIP predates this follow-up.
+
 Executed **22 October 2026 (Asia/Calcutta)** on the user's Windows environment. This supersedes the ZIP's earlier unverified runtime status.
 
 ## Verdict and executed checks

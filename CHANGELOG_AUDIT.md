@@ -58,3 +58,13 @@ Audit started 22 October 2026 (Asia/Calcutta).
 - Added `SHARE_WITH_GPT.md` with report navigation, setup/privacy notes and a suggested review message.
 - Added `scripts/package-share.py` to package source, the lock file, this change log, audit reports, tests and real evidence. It excludes secrets, private database backups/snapshots, dependencies, caches, build output and Git internals.
 - Created `CLAIMLENS_AUDITED_SHARE_2026-10-22.zip` in the parent DBMS workspace with a SHA-256 file manifest; packaging verifies archive CRCs, file hashes and absence of original unique session/demo secrets. No application or database changes are part of packaging.
+
+## CI environment correction — 24 October 2026
+
+- Confirmed the first GitHub Actions run failed at **Apply SQL migrations** because `scripts/doctor.mjs` required a physical `.env` file. The workflow already supplies DATABASE_URL, SESSION_SECRET and SEED_DEMO_PASSWORD as environment variables. Unit tests and TypeScript passed before that failure; seeding, DB assertions and build were skipped, not failed or passed.
+- Updated the doctor to load `.env` when present and accept complete supplied environment configuration when the file is absent. Existing validation and TCP checks still run. Missing or invalid configuration is still rejected. No real `.env` should be uploaded to GitHub.
+- Added three regression tests: environment-only CI works without creating a file; invalid environment configuration fails; supplied values override `.env` defaults without modifying the file.
+- Isolated existing setup/missing-file tests from inherited CI configuration, so the workflow's environment cannot accidentally hide a missing-config regression.
+- Local verification: **14/14 unit/setup tests passed**, including temporary TCP fixture tests outside the restrictive network sandbox; full TypeScript check passed. The two initial sandbox runs could not connect to the local test listener; the unrestricted rerun passed. This is not a claim of a passing GitHub Actions rerun.
+- Prepared the corrected files for the user's GitHub Desktop checkout. No commit, push, workflow rerun, database reset, reseed or secret-file upload was performed by the agent.
+- An optional live migration-runner check was blocked by automatic approval review because it could change the existing database schema. It was not executed. Configuration behavior is verified by the local regressions; end-to-end CI migration/seeding/build results must come from a new workflow run against its disposable service database after the user pushes.

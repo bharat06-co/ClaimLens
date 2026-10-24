@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-24",
+  "failedRun": "https://github.com/bharat06-co/ClaimLens/actions/runs/40069579694",
+  "failedStep": "Apply SQL migrations",
+  "cause": "Configuration doctor required a physical .env although workflow environment settings were present",
+  "localUnitAndSetupTests": { "passed": 14, "failed": 0 },
+  "typecheck": "passed",
+  "newRegressions": [
+    "Complete environment configuration works without .env and does not create it",
+    "Invalid supplied environment values are rejected",
+    "Supplied environment overrides file defaults without changing the file"
+  ],
+  "testFixture": "Temporary local TCP listener, not a PostgreSQL instance",
+  "liveMigrationRunnerRerun": "Not executed: automatic approval review blocked possible changes to existing database schema",
+  "githubActionsRerun": "not yet verified; user will commit and push",
+  "agentCommittedOrPushed": false
+}

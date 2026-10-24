@@ -1,5 +1,13 @@
 # Verification status — 22 October 2026
 
+## Follow-up: CI configuration fix, 24 October 2026
+
+The initial GitHub Actions run failed at **Apply SQL migrations**: the configuration doctor demanded `.env` despite the workflow supplying the required environment variables. Unit tests and TypeScript passed in that run; later DB/build stages were skipped. The doctor now accepts environment-only configuration, keeps validation/TCP checks, and preserves file/environment precedence. Local regression suite: **14/14 passed**; TypeScript passed. The new tests include an environment-only setup without creating `.env`, rejection of invalid supplied settings, and supplied settings overriding file defaults. **A successful GitHub Actions rerun remains unverified until the user pushes this correction.**
+
+The older share ZIP is the 22 October snapshot and does not contain this follow-up fix. Current corrected files are in the working folder and prepared for the GitHub Desktop checkout. See `CHANGELOG_AUDIT.md` for the change record.
+
+## Original audit evidence, 22 October 2026
+
 These are **executed local Windows audit results**, superseding the ZIP's authoring-only/pending notes. Full detail: [AUDIT_RESULTS.md](AUDIT_RESULTS.md).
 
 - **11/11** unit/setup tests, full TypeScript check and optimized production build passed.

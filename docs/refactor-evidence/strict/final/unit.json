@@ -1,0 +1,9 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.cmd",
+    "test"
+  ],
+  "exitCode": 0,
+  "seconds": 1.62,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

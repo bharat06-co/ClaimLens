@@ -1,0 +1,58 @@
+{
+  "passed": 41,
+  "tests": [
+    "active unassigned officer cannot decide",
+    "customer cannot decide",
+    "inactive officer cannot decide",
+    "inactive decision leaves no row, status, repair or audit effect",
+    "submitted unassigned claim cannot be decided",
+    "downstream audit failure aborts the decision statement",
+    "downstream failure rolls back inserted decision, repair and claim transition",
+    "one invalid row aborts a multirow decision insert",
+    "failed multirow insert leaves neither row or trigger side effects",
+    "approval produces exactly one decision, repair and decision audit",
+    "rejection produces decision and audit without a repair",
+    "duplicate approval cannot create a second repair",
+    "decisions append-only on UPDATE",
+    "audits append-only on UPDATE",
+    "decisions append-only on DELETE",
+    "audits append-only on DELETE",
+    "claimed warranty preserves id",
+    "claimed warranty preserves product_id",
+    "claimed warranty preserves policy_id",
+    "claimed warranty preserves start_date",
+    "claimed warranty preserves end_date",
+    "claimed warranty preserves created_at",
+    "claimed warranty permits no-op factual update",
+    "warranty void flag remains editable",
+    "repair open -> open: state, timestamp and audit",
+    "repair open -> in_progress: state, timestamp and audit",
+    "repair open -> completed: prohibited",
+    "repair open -> cancelled: state, timestamp and audit",
+    "repair in_progress -> open: prohibited",
+    "repair in_progress -> in_progress: state, timestamp and audit",
+    "repair in_progress -> completed: state, timestamp and audit",
+    "repair in_progress -> cancelled: state, timestamp and audit",
+    "repair completed -> open: prohibited",
+    "repair completed -> in_progress: prohibited",
+    "repair completed -> completed: state, timestamp and audit",
+    "repair completed -> cancelled: prohibited",
+    "repair cancelled -> open: prohibited",
+    "repair cancelled -> in_progress: prohibited",
+    "repair cancelled -> completed: prohibited",
+    "repair cancelled -> cancelled: state, timestamp and audit",
+    "repair cannot change identity together with a valid transition"
+  ],
+  "observations": [
+    {
+      "variant": "invalid-officer-and-short-reason",
+      "code": "23514",
+      "message": "new row for relation \"claim_decisions\" violates check constraint \"claim_decisions_reason_check\""
+    },
+    {
+      "variant": "invalid-officer-and-duplicate-do-nothing",
+      "rows": 0
+    }
+  ],
+  "mutations": "ROLLED BACK"
+}

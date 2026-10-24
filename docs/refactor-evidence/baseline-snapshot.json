@@ -1,0 +1,1694 @@
+{
+  "stage": "baseline",
+  "tables": 16,
+  "triggers": 21,
+  "triggerFunctions": 20,
+  "usedTriggerFunctions": 20,
+  "columns": 94,
+  "constraints": 66,
+  "indexes": 39,
+  "views": 3,
+  "rows": {
+    "app_users": {
+      "count": 4,
+      "sha256": "347f9c945ae326b937c292e1c033166fe5500c49e2943d3f40841518a53084f4"
+    },
+    "audit_events": {
+      "count": 24,
+      "sha256": "8ff6ab9ec7b8e2b34f02355e978313e26f9c79c76c5ae42424bb16375293dbab"
+    },
+    "claim_assignments": {
+      "count": 6,
+      "sha256": "b9827d6a6b085a0acdf28a971d98304d310ed389f89eea15b6b467e9498c07e2"
+    },
+    "claim_decisions": {
+      "count": 5,
+      "sha256": "7ae75b3200f0c6371ee20798215b05afef8233be7eed85341d3c0636e496e7d8"
+    },
+    "claim_evidence": {
+      "count": 1,
+      "sha256": "975aec6ea07727ff206a4bd044fc556cdf53a466d4268d1bba7b994c1a7cc9d8"
+    },
+    "document_chunks": {
+      "count": 7,
+      "sha256": "276f7ddaa2a43f3f76021ad0fb0905758c9e8089f26ee4389c392d6799d1423b"
+    },
+    "manufacturers": {
+      "count": 3,
+      "sha256": "93b88ccb97910603e4adac20ebac773856a8de974731ed9e9fe1b1927ab9e05e"
+    },
+    "policy_documents": {
+      "count": 3,
+      "sha256": "2390e74efde4eac9d7ed258c4a456334fc2c4b3eab1c04d33fd032a306918099"
+    },
+    "policy_rules": {
+      "count": 6,
+      "sha256": "6eb0df1e3a3832bf3506a227d5055f5e97580109d10fab8d3baf1e6086242a9f"
+    },
+    "product_models": {
+      "count": 4,
+      "sha256": "1e80ceb0aeb5d64a5666129d9357ecfe2a5d8aba4d01d0fa583b511c6d52ec8f"
+    },
+    "registered_products": {
+      "count": 3,
+      "sha256": "99c2225cc0c3b1e33144b6402f7e75b2fba6e38ac2f5d3ab748141e0b1f13b7b"
+    },
+    "repair_orders": {
+      "count": 4,
+      "sha256": "4a297947cc5350042c5241a2cc3389c9c2287b385b07ff08eec9a9d9e192be70"
+    },
+    "semantic_matches": {
+      "count": 1,
+      "sha256": "d7f2fe48011f1697ed660e1322a2ccdaead69e82ba066dcdfc862b8957336fa5"
+    },
+    "warranties": {
+      "count": 3,
+      "sha256": "146de3d571406a3deaa8bf81ea842c7e9906a85cd1974dfdc9340491a613147b"
+    },
+    "warranty_claims": {
+      "count": 7,
+      "sha256": "391996aff01ee910c16fc2f02b2ca89aa6557fb55aaabddc928d035006f50a85"
+    },
+    "warranty_policies": {
+      "count": 3,
+      "sha256": "2b13009fbefc04f003979c7bedb0884a697d0c8da9c6a86904be972a09362140"
+    }
+  },
+  "relationalDefinitionsSha256": "b898abc9ff186c91e4bb879e086f7eb99b731187587aabbcd61356c189c06bf0",
+  "definitions": {
+    "columns": [
+      {
+        "table_name": "app_users",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "app_users",
+        "column_name": "full_name",
+        "ordinal_position": 2,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "app_users",
+        "column_name": "email",
+        "ordinal_position": 3,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "app_users",
+        "column_name": "password_hash",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "app_users",
+        "column_name": "role",
+        "ordinal_position": 5,
+        "data_type": "USER-DEFINED",
+        "udt_name": "account_role",
+        "is_nullable": "NO",
+        "column_default": "'customer'::account_role"
+      },
+      {
+        "table_name": "app_users",
+        "column_name": "is_active",
+        "ordinal_position": 6,
+        "data_type": "boolean",
+        "udt_name": "bool",
+        "is_nullable": "NO",
+        "column_default": "true"
+      },
+      {
+        "table_name": "app_users",
+        "column_name": "created_at",
+        "ordinal_position": 7,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "audit_events",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "bigint",
+        "udt_name": "int8",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "audit_events",
+        "column_name": "event_type",
+        "ordinal_position": 2,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "audit_events",
+        "column_name": "entity_id",
+        "ordinal_position": 3,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "audit_events",
+        "column_name": "actor_id",
+        "ordinal_position": 4,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "audit_events",
+        "column_name": "details",
+        "ordinal_position": 5,
+        "data_type": "jsonb",
+        "udt_name": "jsonb",
+        "is_nullable": "NO",
+        "column_default": "'{}'::jsonb"
+      },
+      {
+        "table_name": "audit_events",
+        "column_name": "occurred_at",
+        "ordinal_position": 6,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "claim_assignments",
+        "column_name": "claim_id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_assignments",
+        "column_name": "officer_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_assignments",
+        "column_name": "assigned_at",
+        "ordinal_position": 3,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "claim_decisions",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "claim_decisions",
+        "column_name": "claim_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_decisions",
+        "column_name": "officer_id",
+        "ordinal_position": 3,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_decisions",
+        "column_name": "verdict",
+        "ordinal_position": 4,
+        "data_type": "USER-DEFINED",
+        "udt_name": "verdict_kind",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_decisions",
+        "column_name": "reason",
+        "ordinal_position": 5,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_decisions",
+        "column_name": "decided_at",
+        "ordinal_position": 6,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "claim_evidence",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "claim_evidence",
+        "column_name": "claim_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_evidence",
+        "column_name": "evidence_url",
+        "ordinal_position": 3,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_evidence",
+        "column_name": "evidence_type",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": "'supporting_link'::text"
+      },
+      {
+        "table_name": "claim_evidence",
+        "column_name": "note",
+        "ordinal_position": 5,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "claim_evidence",
+        "column_name": "created_at",
+        "ordinal_position": 6,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "document_chunks",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "document_chunks",
+        "column_name": "document_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "document_chunks",
+        "column_name": "chunk_number",
+        "ordinal_position": 3,
+        "data_type": "integer",
+        "udt_name": "int4",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "document_chunks",
+        "column_name": "content",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "document_chunks",
+        "column_name": "embedding",
+        "ordinal_position": 5,
+        "data_type": "USER-DEFINED",
+        "udt_name": "vector",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "document_chunks",
+        "column_name": "metadata",
+        "ordinal_position": 6,
+        "data_type": "jsonb",
+        "udt_name": "jsonb",
+        "is_nullable": "NO",
+        "column_default": "'{}'::jsonb"
+      },
+      {
+        "table_name": "document_chunks",
+        "column_name": "created_at",
+        "ordinal_position": 7,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "manufacturers",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "manufacturers",
+        "column_name": "name",
+        "ordinal_position": 2,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "policy_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "title",
+        "ordinal_position": 3,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "document_type",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": "'warranty_terms'::text"
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "original_text",
+        "ordinal_position": 5,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "sha256",
+        "ordinal_position": 6,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "uploaded_by",
+        "ordinal_position": 7,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_documents",
+        "column_name": "created_at",
+        "ordinal_position": 8,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "policy_rules",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "policy_rules",
+        "column_name": "policy_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_rules",
+        "column_name": "kind",
+        "ordinal_position": 3,
+        "data_type": "USER-DEFINED",
+        "udt_name": "rule_kind",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_rules",
+        "column_name": "description",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "policy_rules",
+        "column_name": "created_at",
+        "ordinal_position": 5,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "product_models",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "product_models",
+        "column_name": "manufacturer_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "product_models",
+        "column_name": "model_name",
+        "ordinal_position": 3,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "product_models",
+        "column_name": "category",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "product_models",
+        "column_name": "default_warranty_months",
+        "ordinal_position": 5,
+        "data_type": "integer",
+        "udt_name": "int4",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "registered_products",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "registered_products",
+        "column_name": "customer_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "registered_products",
+        "column_name": "model_id",
+        "ordinal_position": 3,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "registered_products",
+        "column_name": "serial_number",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "registered_products",
+        "column_name": "purchased_on",
+        "ordinal_position": 5,
+        "data_type": "date",
+        "udt_name": "date",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "registered_products",
+        "column_name": "registered_at",
+        "ordinal_position": 6,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "repair_orders",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "repair_orders",
+        "column_name": "claim_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "repair_orders",
+        "column_name": "service_center",
+        "ordinal_position": 3,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "repair_orders",
+        "column_name": "status",
+        "ordinal_position": 4,
+        "data_type": "USER-DEFINED",
+        "udt_name": "repair_state",
+        "is_nullable": "NO",
+        "column_default": "'open'::repair_state"
+      },
+      {
+        "table_name": "repair_orders",
+        "column_name": "notes",
+        "ordinal_position": 5,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "repair_orders",
+        "column_name": "opened_at",
+        "ordinal_position": 6,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "repair_orders",
+        "column_name": "updated_at",
+        "ordinal_position": 7,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "semantic_matches",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "semantic_matches",
+        "column_name": "claim_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "semantic_matches",
+        "column_name": "chunk_id",
+        "ordinal_position": 3,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "semantic_matches",
+        "column_name": "similarity_score",
+        "ordinal_position": 4,
+        "data_type": "double precision",
+        "udt_name": "float8",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "semantic_matches",
+        "column_name": "result_rank",
+        "ordinal_position": 5,
+        "data_type": "integer",
+        "udt_name": "int4",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "semantic_matches",
+        "column_name": "retrieved_at",
+        "ordinal_position": 6,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "warranties",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "warranties",
+        "column_name": "product_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranties",
+        "column_name": "policy_id",
+        "ordinal_position": 3,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranties",
+        "column_name": "start_date",
+        "ordinal_position": 4,
+        "data_type": "date",
+        "udt_name": "date",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranties",
+        "column_name": "end_date",
+        "ordinal_position": 5,
+        "data_type": "date",
+        "udt_name": "date",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranties",
+        "column_name": "is_void",
+        "ordinal_position": 6,
+        "data_type": "boolean",
+        "udt_name": "bool",
+        "is_nullable": "NO",
+        "column_default": "false"
+      },
+      {
+        "table_name": "warranties",
+        "column_name": "created_at",
+        "ordinal_position": 7,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "warranty_claims",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "warranty_claims",
+        "column_name": "warranty_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranty_claims",
+        "column_name": "customer_id",
+        "ordinal_position": 3,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranty_claims",
+        "column_name": "issue_description",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranty_claims",
+        "column_name": "status",
+        "ordinal_position": 5,
+        "data_type": "USER-DEFINED",
+        "udt_name": "claim_state",
+        "is_nullable": "NO",
+        "column_default": "'submitted'::claim_state"
+      },
+      {
+        "table_name": "warranty_claims",
+        "column_name": "submitted_at",
+        "ordinal_position": 6,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "warranty_claims",
+        "column_name": "updated_at",
+        "ordinal_position": 7,
+        "data_type": "timestamp with time zone",
+        "udt_name": "timestamptz",
+        "is_nullable": "NO",
+        "column_default": "now()"
+      },
+      {
+        "table_name": "warranty_policies",
+        "column_name": "id",
+        "ordinal_position": 1,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": "gen_random_uuid()"
+      },
+      {
+        "table_name": "warranty_policies",
+        "column_name": "manufacturer_id",
+        "ordinal_position": 2,
+        "data_type": "uuid",
+        "udt_name": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranty_policies",
+        "column_name": "title",
+        "ordinal_position": 3,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranty_policies",
+        "column_name": "version",
+        "ordinal_position": 4,
+        "data_type": "text",
+        "udt_name": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranty_policies",
+        "column_name": "coverage_months",
+        "ordinal_position": 5,
+        "data_type": "integer",
+        "udt_name": "int4",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "warranty_policies",
+        "column_name": "effective_from",
+        "ordinal_position": 6,
+        "data_type": "date",
+        "udt_name": "date",
+        "is_nullable": "NO",
+        "column_default": null
+      }
+    ],
+    "constraints": [
+      {
+        "table_name": "app_users",
+        "conname": "app_users_full_name_check",
+        "definition": "CHECK (((length(TRIM(BOTH FROM full_name)) >= 2) AND (length(TRIM(BOTH FROM full_name)) <= 120)))"
+      },
+      {
+        "table_name": "app_users",
+        "conname": "app_users_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "app_users",
+        "conname": "email_form",
+        "definition": "CHECK ((email ~* '^[^ @]+@[^ @]+\\.[^ @]+$'::text))"
+      },
+      {
+        "table_name": "audit_events",
+        "conname": "audit_events_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES app_users(id) ON DELETE SET NULL"
+      },
+      {
+        "table_name": "audit_events",
+        "conname": "audit_events_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "claim_assignments",
+        "conname": "claim_assignments_claim_id_fkey",
+        "definition": "FOREIGN KEY (claim_id) REFERENCES warranty_claims(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "claim_assignments",
+        "conname": "claim_assignments_officer_id_fkey",
+        "definition": "FOREIGN KEY (officer_id) REFERENCES app_users(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "claim_assignments",
+        "conname": "claim_assignments_pkey",
+        "definition": "PRIMARY KEY (claim_id)"
+      },
+      {
+        "table_name": "claim_decisions",
+        "conname": "claim_decisions_claim_id_fkey",
+        "definition": "FOREIGN KEY (claim_id) REFERENCES warranty_claims(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "claim_decisions",
+        "conname": "claim_decisions_claim_id_key",
+        "definition": "UNIQUE (claim_id)"
+      },
+      {
+        "table_name": "claim_decisions",
+        "conname": "claim_decisions_officer_id_fkey",
+        "definition": "FOREIGN KEY (officer_id) REFERENCES app_users(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "claim_decisions",
+        "conname": "claim_decisions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "claim_decisions",
+        "conname": "claim_decisions_reason_check",
+        "definition": "CHECK (((length(TRIM(BOTH FROM reason)) >= 20) AND (length(TRIM(BOTH FROM reason)) <= 3000)))"
+      },
+      {
+        "table_name": "claim_evidence",
+        "conname": "claim_evidence_claim_id_fkey",
+        "definition": "FOREIGN KEY (claim_id) REFERENCES warranty_claims(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "claim_evidence",
+        "conname": "claim_evidence_evidence_url_check",
+        "definition": "CHECK ((evidence_url ~ '^https?://'::text))"
+      },
+      {
+        "table_name": "claim_evidence",
+        "conname": "claim_evidence_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "document_chunks",
+        "conname": "document_chunks_chunk_number_check",
+        "definition": "CHECK ((chunk_number >= 0))"
+      },
+      {
+        "table_name": "document_chunks",
+        "conname": "document_chunks_content_check",
+        "definition": "CHECK ((length(TRIM(BOTH FROM content)) > 0))"
+      },
+      {
+        "table_name": "document_chunks",
+        "conname": "document_chunks_document_id_chunk_number_key",
+        "definition": "UNIQUE (document_id, chunk_number)"
+      },
+      {
+        "table_name": "document_chunks",
+        "conname": "document_chunks_document_id_fkey",
+        "definition": "FOREIGN KEY (document_id) REFERENCES policy_documents(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "document_chunks",
+        "conname": "document_chunks_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "manufacturers",
+        "conname": "manufacturers_name_check",
+        "definition": "CHECK ((length(TRIM(BOTH FROM name)) >= 2))"
+      },
+      {
+        "table_name": "manufacturers",
+        "conname": "manufacturers_name_key",
+        "definition": "UNIQUE (name)"
+      },
+      {
+        "table_name": "manufacturers",
+        "conname": "manufacturers_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "policy_documents",
+        "conname": "policy_documents_original_text_check",
+        "definition": "CHECK ((length(TRIM(BOTH FROM original_text)) >= 50))"
+      },
+      {
+        "table_name": "policy_documents",
+        "conname": "policy_documents_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "policy_documents",
+        "conname": "policy_documents_policy_id_fkey",
+        "definition": "FOREIGN KEY (policy_id) REFERENCES warranty_policies(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "policy_documents",
+        "conname": "policy_documents_policy_id_sha256_key",
+        "definition": "UNIQUE (policy_id, sha256)"
+      },
+      {
+        "table_name": "policy_documents",
+        "conname": "policy_documents_sha256_check",
+        "definition": "CHECK ((length(sha256) = 64))"
+      },
+      {
+        "table_name": "policy_documents",
+        "conname": "policy_documents_uploaded_by_fkey",
+        "definition": "FOREIGN KEY (uploaded_by) REFERENCES app_users(id) ON DELETE SET NULL"
+      },
+      {
+        "table_name": "policy_rules",
+        "conname": "policy_rules_description_check",
+        "definition": "CHECK ((length(TRIM(BOTH FROM description)) >= 10))"
+      },
+      {
+        "table_name": "policy_rules",
+        "conname": "policy_rules_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "policy_rules",
+        "conname": "policy_rules_policy_id_fkey",
+        "definition": "FOREIGN KEY (policy_id) REFERENCES warranty_policies(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "product_models",
+        "conname": "product_models_default_warranty_months_check",
+        "definition": "CHECK (((default_warranty_months >= 1) AND (default_warranty_months <= 120)))"
+      },
+      {
+        "table_name": "product_models",
+        "conname": "product_models_manufacturer_id_fkey",
+        "definition": "FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "product_models",
+        "conname": "product_models_manufacturer_id_model_name_key",
+        "definition": "UNIQUE (manufacturer_id, model_name)"
+      },
+      {
+        "table_name": "product_models",
+        "conname": "product_models_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "registered_products",
+        "conname": "registered_products_customer_id_fkey",
+        "definition": "FOREIGN KEY (customer_id) REFERENCES app_users(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "registered_products",
+        "conname": "registered_products_model_id_fkey",
+        "definition": "FOREIGN KEY (model_id) REFERENCES product_models(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "registered_products",
+        "conname": "registered_products_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "registered_products",
+        "conname": "registered_products_purchased_on_check",
+        "definition": "CHECK ((purchased_on <= CURRENT_DATE))"
+      },
+      {
+        "table_name": "registered_products",
+        "conname": "registered_products_serial_number_check",
+        "definition": "CHECK (((length(TRIM(BOTH FROM serial_number)) >= 5) AND (length(TRIM(BOTH FROM serial_number)) <= 100)))"
+      },
+      {
+        "table_name": "registered_products",
+        "conname": "registered_products_serial_number_key",
+        "definition": "UNIQUE (serial_number)"
+      },
+      {
+        "table_name": "repair_orders",
+        "conname": "repair_orders_claim_id_fkey",
+        "definition": "FOREIGN KEY (claim_id) REFERENCES warranty_claims(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "repair_orders",
+        "conname": "repair_orders_claim_id_key",
+        "definition": "UNIQUE (claim_id)"
+      },
+      {
+        "table_name": "repair_orders",
+        "conname": "repair_orders_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "semantic_matches",
+        "conname": "semantic_matches_chunk_id_fkey",
+        "definition": "FOREIGN KEY (chunk_id) REFERENCES document_chunks(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "semantic_matches",
+        "conname": "semantic_matches_claim_id_chunk_id_key",
+        "definition": "UNIQUE (claim_id, chunk_id)"
+      },
+      {
+        "table_name": "semantic_matches",
+        "conname": "semantic_matches_claim_id_fkey",
+        "definition": "FOREIGN KEY (claim_id) REFERENCES warranty_claims(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "semantic_matches",
+        "conname": "semantic_matches_claim_id_result_rank_key",
+        "definition": "UNIQUE (claim_id, result_rank)"
+      },
+      {
+        "table_name": "semantic_matches",
+        "conname": "semantic_matches_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "semantic_matches",
+        "conname": "semantic_matches_result_rank_check",
+        "definition": "CHECK ((result_rank > 0))"
+      },
+      {
+        "table_name": "semantic_matches",
+        "conname": "semantic_matches_similarity_score_check",
+        "definition": "CHECK (((similarity_score >= (0)::double precision) AND (similarity_score <= (1)::double precision)))"
+      },
+      {
+        "table_name": "warranties",
+        "conname": "warranties_check",
+        "definition": "CHECK ((end_date >= start_date))"
+      },
+      {
+        "table_name": "warranties",
+        "conname": "warranties_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "warranties",
+        "conname": "warranties_policy_id_fkey",
+        "definition": "FOREIGN KEY (policy_id) REFERENCES warranty_policies(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "warranties",
+        "conname": "warranties_product_id_fkey",
+        "definition": "FOREIGN KEY (product_id) REFERENCES registered_products(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "warranties",
+        "conname": "warranties_product_id_key",
+        "definition": "UNIQUE (product_id)"
+      },
+      {
+        "table_name": "warranty_claims",
+        "conname": "warranty_claims_customer_id_fkey",
+        "definition": "FOREIGN KEY (customer_id) REFERENCES app_users(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "warranty_claims",
+        "conname": "warranty_claims_issue_description_check",
+        "definition": "CHECK (((length(TRIM(BOTH FROM issue_description)) >= 15) AND (length(TRIM(BOTH FROM issue_description)) <= 3000)))"
+      },
+      {
+        "table_name": "warranty_claims",
+        "conname": "warranty_claims_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "warranty_claims",
+        "conname": "warranty_claims_warranty_id_fkey",
+        "definition": "FOREIGN KEY (warranty_id) REFERENCES warranties(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "warranty_policies",
+        "conname": "warranty_policies_coverage_months_check",
+        "definition": "CHECK (((coverage_months >= 1) AND (coverage_months <= 120)))"
+      },
+      {
+        "table_name": "warranty_policies",
+        "conname": "warranty_policies_manufacturer_id_fkey",
+        "definition": "FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(id) ON DELETE RESTRICT"
+      },
+      {
+        "table_name": "warranty_policies",
+        "conname": "warranty_policies_manufacturer_id_title_version_key",
+        "definition": "UNIQUE (manufacturer_id, title, version)"
+      },
+      {
+        "table_name": "warranty_policies",
+        "conname": "warranty_policies_pkey",
+        "definition": "PRIMARY KEY (id)"
+      }
+    ],
+    "indexes": [
+      {
+        "tablename": "app_users",
+        "indexname": "app_users_pkey",
+        "indexdef": "CREATE UNIQUE INDEX app_users_pkey ON public.app_users USING btree (id)"
+      },
+      {
+        "tablename": "app_users",
+        "indexname": "users_unique_lower_email",
+        "indexdef": "CREATE UNIQUE INDEX users_unique_lower_email ON public.app_users USING btree (lower(email))"
+      },
+      {
+        "tablename": "audit_events",
+        "indexname": "audit_event_entity_idx",
+        "indexdef": "CREATE INDEX audit_event_entity_idx ON public.audit_events USING btree (entity_id, occurred_at DESC)"
+      },
+      {
+        "tablename": "audit_events",
+        "indexname": "audit_events_pkey",
+        "indexdef": "CREATE UNIQUE INDEX audit_events_pkey ON public.audit_events USING btree (id)"
+      },
+      {
+        "tablename": "claim_assignments",
+        "indexname": "assignments_officer_idx",
+        "indexdef": "CREATE INDEX assignments_officer_idx ON public.claim_assignments USING btree (officer_id)"
+      },
+      {
+        "tablename": "claim_assignments",
+        "indexname": "claim_assignments_pkey",
+        "indexdef": "CREATE UNIQUE INDEX claim_assignments_pkey ON public.claim_assignments USING btree (claim_id)"
+      },
+      {
+        "tablename": "claim_decisions",
+        "indexname": "claim_decisions_claim_id_key",
+        "indexdef": "CREATE UNIQUE INDEX claim_decisions_claim_id_key ON public.claim_decisions USING btree (claim_id)"
+      },
+      {
+        "tablename": "claim_decisions",
+        "indexname": "claim_decisions_pkey",
+        "indexdef": "CREATE UNIQUE INDEX claim_decisions_pkey ON public.claim_decisions USING btree (id)"
+      },
+      {
+        "tablename": "claim_evidence",
+        "indexname": "claim_evidence_pkey",
+        "indexdef": "CREATE UNIQUE INDEX claim_evidence_pkey ON public.claim_evidence USING btree (id)"
+      },
+      {
+        "tablename": "document_chunks",
+        "indexname": "chunks_document_idx",
+        "indexdef": "CREATE INDEX chunks_document_idx ON public.document_chunks USING btree (document_id)"
+      },
+      {
+        "tablename": "document_chunks",
+        "indexname": "chunks_embedding_hnsw_idx",
+        "indexdef": "CREATE INDEX chunks_embedding_hnsw_idx ON public.document_chunks USING hnsw (embedding vector_cosine_ops)"
+      },
+      {
+        "tablename": "document_chunks",
+        "indexname": "chunks_metadata_gin_idx",
+        "indexdef": "CREATE INDEX chunks_metadata_gin_idx ON public.document_chunks USING gin (metadata)"
+      },
+      {
+        "tablename": "document_chunks",
+        "indexname": "document_chunks_document_id_chunk_number_key",
+        "indexdef": "CREATE UNIQUE INDEX document_chunks_document_id_chunk_number_key ON public.document_chunks USING btree (document_id, chunk_number)"
+      },
+      {
+        "tablename": "document_chunks",
+        "indexname": "document_chunks_pkey",
+        "indexdef": "CREATE UNIQUE INDEX document_chunks_pkey ON public.document_chunks USING btree (id)"
+      },
+      {
+        "tablename": "manufacturers",
+        "indexname": "manufacturers_name_key",
+        "indexdef": "CREATE UNIQUE INDEX manufacturers_name_key ON public.manufacturers USING btree (name)"
+      },
+      {
+        "tablename": "manufacturers",
+        "indexname": "manufacturers_pkey",
+        "indexdef": "CREATE UNIQUE INDEX manufacturers_pkey ON public.manufacturers USING btree (id)"
+      },
+      {
+        "tablename": "policy_documents",
+        "indexname": "policy_documents_pkey",
+        "indexdef": "CREATE UNIQUE INDEX policy_documents_pkey ON public.policy_documents USING btree (id)"
+      },
+      {
+        "tablename": "policy_documents",
+        "indexname": "policy_documents_policy_id_sha256_key",
+        "indexdef": "CREATE UNIQUE INDEX policy_documents_policy_id_sha256_key ON public.policy_documents USING btree (policy_id, sha256)"
+      },
+      {
+        "tablename": "policy_rules",
+        "indexname": "policy_rules_pkey",
+        "indexdef": "CREATE UNIQUE INDEX policy_rules_pkey ON public.policy_rules USING btree (id)"
+      },
+      {
+        "tablename": "policy_rules",
+        "indexname": "policy_rules_policy_idx",
+        "indexdef": "CREATE INDEX policy_rules_policy_idx ON public.policy_rules USING btree (policy_id)"
+      },
+      {
+        "tablename": "product_models",
+        "indexname": "product_models_manufacturer_id_model_name_key",
+        "indexdef": "CREATE UNIQUE INDEX product_models_manufacturer_id_model_name_key ON public.product_models USING btree (manufacturer_id, model_name)"
+      },
+      {
+        "tablename": "product_models",
+        "indexname": "product_models_pkey",
+        "indexdef": "CREATE UNIQUE INDEX product_models_pkey ON public.product_models USING btree (id)"
+      },
+      {
+        "tablename": "registered_products",
+        "indexname": "registered_products_customer_idx",
+        "indexdef": "CREATE INDEX registered_products_customer_idx ON public.registered_products USING btree (customer_id)"
+      },
+      {
+        "tablename": "registered_products",
+        "indexname": "registered_products_pkey",
+        "indexdef": "CREATE UNIQUE INDEX registered_products_pkey ON public.registered_products USING btree (id)"
+      },
+      {
+        "tablename": "registered_products",
+        "indexname": "registered_products_serial_number_key",
+        "indexdef": "CREATE UNIQUE INDEX registered_products_serial_number_key ON public.registered_products USING btree (serial_number)"
+      },
+      {
+        "tablename": "repair_orders",
+        "indexname": "repair_orders_claim_id_key",
+        "indexdef": "CREATE UNIQUE INDEX repair_orders_claim_id_key ON public.repair_orders USING btree (claim_id)"
+      },
+      {
+        "tablename": "repair_orders",
+        "indexname": "repair_orders_pkey",
+        "indexdef": "CREATE UNIQUE INDEX repair_orders_pkey ON public.repair_orders USING btree (id)"
+      },
+      {
+        "tablename": "semantic_matches",
+        "indexname": "semantic_matches_claim_id_chunk_id_key",
+        "indexdef": "CREATE UNIQUE INDEX semantic_matches_claim_id_chunk_id_key ON public.semantic_matches USING btree (claim_id, chunk_id)"
+      },
+      {
+        "tablename": "semantic_matches",
+        "indexname": "semantic_matches_claim_id_result_rank_key",
+        "indexdef": "CREATE UNIQUE INDEX semantic_matches_claim_id_result_rank_key ON public.semantic_matches USING btree (claim_id, result_rank)"
+      },
+      {
+        "tablename": "semantic_matches",
+        "indexname": "semantic_matches_claim_idx",
+        "indexdef": "CREATE INDEX semantic_matches_claim_idx ON public.semantic_matches USING btree (claim_id, result_rank)"
+      },
+      {
+        "tablename": "semantic_matches",
+        "indexname": "semantic_matches_pkey",
+        "indexdef": "CREATE UNIQUE INDEX semantic_matches_pkey ON public.semantic_matches USING btree (id)"
+      },
+      {
+        "tablename": "warranties",
+        "indexname": "warranties_pkey",
+        "indexdef": "CREATE UNIQUE INDEX warranties_pkey ON public.warranties USING btree (id)"
+      },
+      {
+        "tablename": "warranties",
+        "indexname": "warranties_policy_idx",
+        "indexdef": "CREATE INDEX warranties_policy_idx ON public.warranties USING btree (policy_id)"
+      },
+      {
+        "tablename": "warranties",
+        "indexname": "warranties_product_id_key",
+        "indexdef": "CREATE UNIQUE INDEX warranties_product_id_key ON public.warranties USING btree (product_id)"
+      },
+      {
+        "tablename": "warranty_claims",
+        "indexname": "claims_customer_date_idx",
+        "indexdef": "CREATE INDEX claims_customer_date_idx ON public.warranty_claims USING btree (customer_id, submitted_at DESC)"
+      },
+      {
+        "tablename": "warranty_claims",
+        "indexname": "claims_status_date_idx",
+        "indexdef": "CREATE INDEX claims_status_date_idx ON public.warranty_claims USING btree (status, submitted_at DESC)"
+      },
+      {
+        "tablename": "warranty_claims",
+        "indexname": "warranty_claims_pkey",
+        "indexdef": "CREATE UNIQUE INDEX warranty_claims_pkey ON public.warranty_claims USING btree (id)"
+      },
+      {
+        "tablename": "warranty_policies",
+        "indexname": "warranty_policies_manufacturer_id_title_version_key",
+        "indexdef": "CREATE UNIQUE INDEX warranty_policies_manufacturer_id_title_version_key ON public.warranty_policies USING btree (manufacturer_id, title, version)"
+      },
+      {
+        "tablename": "warranty_policies",
+        "indexname": "warranty_policies_pkey",
+        "indexdef": "CREATE UNIQUE INDEX warranty_policies_pkey ON public.warranty_policies USING btree (id)"
+      }
+    ],
+    "views": [
+      {
+        "viewname": "v_claim_overview",
+        "definition": " SELECT c.id,\n    c.customer_id,\n    u.full_name AS customer_name,\n    c.issue_description,\n    c.status,\n    c.submitted_at,\n    c.updated_at,\n    rp.serial_number,\n    pm.model_name,\n    m.name AS manufacturer_name,\n    w.start_date,\n    w.end_date,\n    w.is_void,\n    ((((c.submitted_at)::date >= w.start_date) AND ((c.submitted_at)::date <= w.end_date)) AND (NOT w.is_void)) AS within_warranty_period,\n    ca.officer_id,\n    off.full_name AS assigned_officer,\n    d.verdict,\n    d.reason AS decision_reason,\n    ( SELECT count(*) AS count\n           FROM claim_evidence ev\n          WHERE (ev.claim_id = c.id)) AS evidence_count\n   FROM ((((((((warranty_claims c\n     JOIN app_users u ON ((u.id = c.customer_id)))\n     JOIN warranties w ON ((w.id = c.warranty_id)))\n     JOIN registered_products rp ON ((rp.id = w.product_id)))\n     JOIN product_models pm ON ((pm.id = rp.model_id)))\n     JOIN manufacturers m ON ((m.id = pm.manufacturer_id)))\n     LEFT JOIN claim_assignments ca ON ((ca.claim_id = c.id)))\n     LEFT JOIN app_users off ON ((off.id = ca.officer_id)))\n     LEFT JOIN claim_decisions d ON ((d.claim_id = c.id)));"
+      },
+      {
+        "viewname": "v_claim_status_summary",
+        "definition": " SELECT status,\n    (count(*))::integer AS total,\n    (count(*) FILTER (WHERE (submitted_at >= (now() - '30 days'::interval))))::integer AS submitted_last_30_days\n   FROM warranty_claims\n  GROUP BY status;"
+      },
+      {
+        "viewname": "v_policy_inventory",
+        "definition": " SELECT p.id,\n    p.title,\n    p.version,\n    m.name AS manufacturer_name,\n    (count(DISTINCT doc.id))::integer AS document_count,\n    (count(ch.id))::integer AS chunk_count\n   FROM (((warranty_policies p\n     JOIN manufacturers m ON ((m.id = p.manufacturer_id)))\n     LEFT JOIN policy_documents doc ON ((doc.policy_id = p.id)))\n     LEFT JOIN document_chunks ch ON ((ch.document_id = doc.id)))\n  GROUP BY p.id, p.title, p.version, m.name;"
+      }
+    ],
+    "registration": [
+      {
+        "definition": "CREATE OR REPLACE FUNCTION public.register_warranty(p_customer uuid, p_model uuid, p_serial text, p_purchase_date date, p_policy uuid)\n RETURNS uuid\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE new_product uuid; new_warranty uuid; months integer;\r\nBEGIN\r\n IF NOT EXISTS (SELECT 1 FROM app_users WHERE id=p_customer AND role='customer' AND is_active) THEN\r\n  RAISE EXCEPTION 'Valid customer required';\r\n END IF;\r\n IF p_purchase_date > CURRENT_DATE THEN RAISE EXCEPTION 'Purchase date cannot be in the future'; END IF;\r\n SELECT coverage_months INTO months FROM warranty_policies WHERE id=p_policy;\r\n IF months IS NULL THEN RAISE EXCEPTION 'Policy not found'; END IF;\r\n INSERT INTO registered_products(customer_id,model_id,serial_number,purchased_on)\r\n VALUES(p_customer,p_model,trim(p_serial),p_purchase_date) RETURNING id INTO new_product;\r\n INSERT INTO warranties(product_id,policy_id,start_date,end_date)\r\n VALUES(new_product,p_policy,p_purchase_date,(p_purchase_date + make_interval(months => months))::date - 1)\r\n RETURNING id INTO new_warranty;\r\n RETURN new_warranty;\r\nEND $function$\n"
+      }
+    ]
+  },
+  "triggerDefinitions": [
+    {
+      "tgname": "trg_apply_claim_decision",
+      "table_name": "claim_decisions",
+      "proname": "apply_claim_decision",
+      "definition": "CREATE TRIGGER trg_apply_claim_decision AFTER INSERT ON public.claim_decisions FOR EACH ROW EXECUTE FUNCTION apply_claim_decision()"
+    },
+    {
+      "tgname": "trg_audit_new_claim",
+      "table_name": "warranty_claims",
+      "proname": "audit_new_claim",
+      "definition": "CREATE TRIGGER trg_audit_new_claim AFTER INSERT ON public.warranty_claims FOR EACH ROW EXECUTE FUNCTION audit_new_claim()"
+    },
+    {
+      "tgname": "trg_audit_repair_transition",
+      "table_name": "repair_orders",
+      "proname": "audit_repair_transition",
+      "definition": "CREATE TRIGGER trg_audit_repair_transition AFTER UPDATE OF status ON public.repair_orders FOR EACH ROW WHEN ((old.status IS DISTINCT FROM new.status)) EXECUTE FUNCTION audit_repair_transition()"
+    },
+    {
+      "tgname": "trg_check_repair_transition",
+      "table_name": "repair_orders",
+      "proname": "check_repair_transition",
+      "definition": "CREATE TRIGGER trg_check_repair_transition BEFORE UPDATE OF status ON public.repair_orders FOR EACH ROW EXECUTE FUNCTION check_repair_transition()"
+    },
+    {
+      "tgname": "trg_enforce_assignment_integrity",
+      "table_name": "claim_assignments",
+      "proname": "enforce_assignment_integrity",
+      "definition": "CREATE TRIGGER trg_enforce_assignment_integrity BEFORE INSERT OR DELETE OR UPDATE ON public.claim_assignments FOR EACH ROW EXECUTE FUNCTION enforce_assignment_integrity()"
+    },
+    {
+      "tgname": "trg_enforce_claim_state_transition",
+      "table_name": "warranty_claims",
+      "proname": "enforce_claim_state_transition",
+      "definition": "CREATE TRIGGER trg_enforce_claim_state_transition BEFORE INSERT OR UPDATE ON public.warranty_claims FOR EACH ROW EXECUTE FUNCTION enforce_claim_state_transition()"
+    },
+    {
+      "tgname": "trg_enforce_repair_integrity",
+      "table_name": "repair_orders",
+      "proname": "enforce_repair_integrity",
+      "definition": "CREATE TRIGGER trg_enforce_repair_integrity BEFORE INSERT OR DELETE OR UPDATE ON public.repair_orders FOR EACH ROW EXECUTE FUNCTION enforce_repair_integrity()"
+    },
+    {
+      "tgname": "trg_preserve_claim_warranty",
+      "table_name": "warranties",
+      "proname": "preserve_claim_warranty",
+      "definition": "CREATE TRIGGER trg_preserve_claim_warranty BEFORE UPDATE ON public.warranties FOR EACH ROW EXECUTE FUNCTION preserve_claim_warranty()"
+    },
+    {
+      "tgname": "trg_preserve_model_manufacturer",
+      "table_name": "product_models",
+      "proname": "preserve_model_manufacturer",
+      "definition": "CREATE TRIGGER trg_preserve_model_manufacturer BEFORE UPDATE ON public.product_models FOR EACH ROW EXECUTE FUNCTION preserve_model_manufacturer()"
+    },
+    {
+      "tgname": "trg_preserve_policy_document",
+      "table_name": "policy_documents",
+      "proname": "preserve_semantic_source",
+      "definition": "CREATE TRIGGER trg_preserve_policy_document BEFORE UPDATE ON public.policy_documents FOR EACH ROW EXECUTE FUNCTION preserve_semantic_source()"
+    },
+    {
+      "tgname": "trg_preserve_policy_terms",
+      "table_name": "warranty_policies",
+      "proname": "preserve_policy_terms",
+      "definition": "CREATE TRIGGER trg_preserve_policy_terms BEFORE UPDATE ON public.warranty_policies FOR EACH ROW EXECUTE FUNCTION preserve_policy_terms()"
+    },
+    {
+      "tgname": "trg_preserve_registered_product",
+      "table_name": "registered_products",
+      "proname": "preserve_registered_product",
+      "definition": "CREATE TRIGGER trg_preserve_registered_product BEFORE UPDATE ON public.registered_products FOR EACH ROW EXECUTE FUNCTION preserve_registered_product()"
+    },
+    {
+      "tgname": "trg_preserve_retrieved_chunk",
+      "table_name": "document_chunks",
+      "proname": "preserve_semantic_source",
+      "definition": "CREATE TRIGGER trg_preserve_retrieved_chunk BEFORE UPDATE ON public.document_chunks FOR EACH ROW EXECUTE FUNCTION preserve_semantic_source()"
+    },
+    {
+      "tgname": "trg_prevent_audit_rewrite",
+      "table_name": "audit_events",
+      "proname": "prevent_audit_rewrite",
+      "definition": "CREATE TRIGGER trg_prevent_audit_rewrite BEFORE DELETE OR UPDATE ON public.audit_events FOR EACH ROW EXECUTE FUNCTION prevent_audit_rewrite()"
+    },
+    {
+      "tgname": "trg_prevent_final_decision_rewrite",
+      "table_name": "claim_decisions",
+      "proname": "prevent_final_decision_rewrite",
+      "definition": "CREATE TRIGGER trg_prevent_final_decision_rewrite BEFORE DELETE OR UPDATE ON public.claim_decisions FOR EACH ROW EXECUTE FUNCTION prevent_final_decision_rewrite()"
+    },
+    {
+      "tgname": "trg_validate_claim_ownership",
+      "table_name": "warranty_claims",
+      "proname": "validate_claim_ownership",
+      "definition": "CREATE TRIGGER trg_validate_claim_ownership BEFORE INSERT OR UPDATE OF warranty_id, customer_id ON public.warranty_claims FOR EACH ROW EXECUTE FUNCTION validate_claim_ownership()"
+    },
+    {
+      "tgname": "trg_validate_deciding_officer",
+      "table_name": "claim_decisions",
+      "proname": "validate_deciding_officer",
+      "definition": "CREATE TRIGGER trg_validate_deciding_officer BEFORE INSERT ON public.claim_decisions FOR EACH ROW EXECUTE FUNCTION validate_deciding_officer()"
+    },
+    {
+      "tgname": "trg_validate_officer_assignment",
+      "table_name": "claim_assignments",
+      "proname": "validate_officer_assignment",
+      "definition": "CREATE TRIGGER trg_validate_officer_assignment BEFORE INSERT OR UPDATE ON public.claim_assignments FOR EACH ROW EXECUTE FUNCTION validate_officer_assignment()"
+    },
+    {
+      "tgname": "trg_validate_registered_customer",
+      "table_name": "registered_products",
+      "proname": "validate_registered_customer",
+      "definition": "CREATE TRIGGER trg_validate_registered_customer BEFORE INSERT OR UPDATE OF customer_id ON public.registered_products FOR EACH ROW EXECUTE FUNCTION validate_registered_customer()"
+    },
+    {
+      "tgname": "trg_validate_semantic_match_scope",
+      "table_name": "semantic_matches",
+      "proname": "validate_semantic_match_scope",
+      "definition": "CREATE TRIGGER trg_validate_semantic_match_scope BEFORE INSERT OR UPDATE OF claim_id, chunk_id ON public.semantic_matches FOR EACH ROW EXECUTE FUNCTION validate_semantic_match_scope()"
+    },
+    {
+      "tgname": "trg_validate_warranty",
+      "table_name": "warranties",
+      "proname": "validate_warranty",
+      "definition": "CREATE TRIGGER trg_validate_warranty BEFORE INSERT OR UPDATE ON public.warranties FOR EACH ROW EXECUTE FUNCTION validate_warranty()"
+    }
+  ],
+  "functionDefinitions": [
+    {
+      "proname": "apply_claim_decision",
+      "definition": "CREATE OR REPLACE FUNCTION public.apply_claim_decision()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE assigned_officer uuid; claim_status claim_state;\r\nBEGIN\r\n SELECT officer_id INTO assigned_officer FROM claim_assignments WHERE claim_id = NEW.claim_id;\r\n SELECT status INTO claim_status FROM warranty_claims WHERE id = NEW.claim_id FOR UPDATE;\r\n IF assigned_officer IS DISTINCT FROM NEW.officer_id OR claim_status <> 'in_review' THEN\r\n  RAISE EXCEPTION 'Only the assigned officer may decide an in-review claim';\r\n END IF;\r\n UPDATE warranty_claims SET status = NEW.verdict::text::claim_state,updated_at = now() WHERE id = NEW.claim_id;\r\n IF NEW.verdict = 'approved' THEN\r\n  INSERT INTO repair_orders(claim_id,notes) VALUES (NEW.claim_id,'Created automatically following approval');\r\n END IF;\r\n INSERT INTO audit_events(event_type,entity_id,actor_id,details)\r\n VALUES('claim_decision',NEW.claim_id,NEW.officer_id,\r\n   jsonb_build_object('verdict',NEW.verdict,'reason',NEW.reason));\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "audit_new_claim",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_new_claim()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n INSERT INTO audit_events(event_type,entity_id,actor_id,details)\r\n VALUES('claim_submitted',NEW.id,NEW.customer_id,jsonb_build_object('warranty_id',NEW.warranty_id));\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "audit_repair_transition",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_repair_transition()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE v_actor uuid;\r\nBEGIN\r\n SELECT officer_id INTO v_actor FROM claim_assignments WHERE claim_id=NEW.claim_id;\r\n INSERT INTO audit_events(event_type,entity_id,actor_id,details)\r\n VALUES('repair_status_changed',NEW.claim_id,v_actor,\r\n jsonb_build_object('from',OLD.status,'to',NEW.status));\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "check_repair_transition",
+      "definition": "CREATE OR REPLACE FUNCTION public.check_repair_transition()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF OLD.status = NEW.status THEN RETURN NEW; END IF;\r\n IF NOT (\r\n  (OLD.status = 'open' AND NEW.status IN ('in_progress','cancelled')) OR\r\n  (OLD.status = 'in_progress' AND NEW.status IN ('completed','cancelled'))\r\n ) THEN\r\n  RAISE EXCEPTION 'Invalid repair order status transition: % to %',OLD.status,NEW.status;\r\n END IF;\r\n NEW.updated_at = now();\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "enforce_assignment_integrity",
+      "definition": "CREATE OR REPLACE FUNCTION public.enforce_assignment_integrity()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE v_status claim_state;\r\nBEGIN\r\n IF TG_OP <> 'INSERT' THEN\r\n  RAISE EXCEPTION 'Claim assignment is immutable';\r\n END IF;\r\n SELECT status INTO v_status FROM warranty_claims WHERE id = NEW.claim_id FOR UPDATE;\r\n IF v_status IS DISTINCT FROM 'submitted' THEN\r\n  RAISE EXCEPTION 'Only submitted claims may be assigned';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "enforce_claim_state_transition",
+      "definition": "CREATE OR REPLACE FUNCTION public.enforce_claim_state_transition()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF TG_OP = 'INSERT' THEN\r\n  IF NEW.status <> 'submitted' THEN\r\n   RAISE EXCEPTION 'New claims must begin in submitted state';\r\n  END IF;\r\n  RETURN NEW;\r\n END IF;\r\n\r\n -- Identity and issue description are historical claim facts, not editable\r\n -- after submission. An officer decision is instead recorded in a new row.\r\n IF NEW.warranty_id IS DISTINCT FROM OLD.warranty_id OR\r\n    NEW.customer_id IS DISTINCT FROM OLD.customer_id OR\r\n    NEW.issue_description IS DISTINCT FROM OLD.issue_description OR\r\n    NEW.submitted_at IS DISTINCT FROM OLD.submitted_at THEN\r\n  RAISE EXCEPTION 'Submitted claim facts cannot be rewritten';\r\n END IF;\r\n\r\n IF NEW.status = OLD.status THEN RETURN NEW; END IF;\r\n IF OLD.status = 'submitted' AND NEW.status = 'in_review' THEN\r\n  IF NOT EXISTS (SELECT 1 FROM claim_assignments a WHERE a.claim_id = NEW.id) THEN\r\n   RAISE EXCEPTION 'Claim must be assigned before entering review';\r\n  END IF;\r\n ELSIF OLD.status = 'in_review' AND NEW.status IN ('approved','rejected') THEN\r\n  IF NOT EXISTS (\r\n   SELECT 1 FROM claim_decisions d\r\n   JOIN claim_assignments a ON a.claim_id = d.claim_id\r\n   WHERE d.claim_id = NEW.id AND d.officer_id = a.officer_id\r\n     AND d.verdict::text = NEW.status::text\r\n  ) THEN\r\n   RAISE EXCEPTION 'Final claim status requires a matching recorded decision';\r\n  END IF;\r\n ELSE\r\n  RAISE EXCEPTION 'Invalid claim status transition: % to %', OLD.status,NEW.status;\r\n END IF;\r\n NEW.updated_at = now();\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "enforce_repair_integrity",
+      "definition": "CREATE OR REPLACE FUNCTION public.enforce_repair_integrity()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF TG_OP = 'DELETE' THEN RAISE EXCEPTION 'Repair orders must be retained; cancel instead'; END IF;\r\n IF TG_OP = 'INSERT' THEN\r\n  IF NEW.status <> 'open' OR NOT EXISTS (\r\n   SELECT 1 FROM warranty_claims c JOIN claim_decisions d ON d.claim_id=c.id\r\n   WHERE c.id=NEW.claim_id AND c.status='approved' AND d.verdict='approved'\r\n  ) THEN RAISE EXCEPTION 'A repair must start open for an approved, decided claim'; END IF;\r\n ELSIF NEW.id IS DISTINCT FROM OLD.id OR NEW.claim_id IS DISTINCT FROM OLD.claim_id\r\n    OR NEW.opened_at IS DISTINCT FROM OLD.opened_at THEN\r\n  RAISE EXCEPTION 'Repair order identity and claim are immutable';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "preserve_claim_warranty",
+      "definition": "CREATE OR REPLACE FUNCTION public.preserve_claim_warranty()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF (NEW.id,NEW.product_id,NEW.policy_id,NEW.start_date,NEW.end_date,NEW.created_at)\r\n    IS DISTINCT FROM\r\n    (OLD.id,OLD.product_id,OLD.policy_id,OLD.start_date,OLD.end_date,OLD.created_at)\r\n    AND EXISTS(SELECT 1 FROM warranty_claims WHERE warranty_id=OLD.id) THEN\r\n  RAISE EXCEPTION 'Claim warranty facts are immutable';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "preserve_model_manufacturer",
+      "definition": "CREATE OR REPLACE FUNCTION public.preserve_model_manufacturer()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF NEW.manufacturer_id IS DISTINCT FROM OLD.manufacturer_id\r\n    AND EXISTS(SELECT 1 FROM registered_products WHERE model_id=OLD.id) THEN\r\n  RAISE EXCEPTION 'Registered model manufacturer is immutable';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "preserve_policy_terms",
+      "definition": "CREATE OR REPLACE FUNCTION public.preserve_policy_terms()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF (NEW.manufacturer_id,NEW.coverage_months,NEW.effective_from,NEW.version)\r\n    IS DISTINCT FROM (OLD.manufacturer_id,OLD.coverage_months,OLD.effective_from,OLD.version)\r\n    AND (EXISTS(SELECT 1 FROM warranties WHERE policy_id=OLD.id)\r\n      OR EXISTS(SELECT 1 FROM policy_documents WHERE policy_id=OLD.id)) THEN\r\n  RAISE EXCEPTION 'Referenced policy terms are immutable; create a new version';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "preserve_registered_product",
+      "definition": "CREATE OR REPLACE FUNCTION public.preserve_registered_product()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF (NEW.id,NEW.customer_id,NEW.model_id,NEW.serial_number,NEW.purchased_on,NEW.registered_at)\r\n    IS DISTINCT FROM\r\n    (OLD.id,OLD.customer_id,OLD.model_id,OLD.serial_number,OLD.purchased_on,OLD.registered_at)\r\n    AND EXISTS(SELECT 1 FROM warranties WHERE product_id=OLD.id) THEN\r\n  RAISE EXCEPTION 'Warranted product facts are immutable';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "preserve_semantic_source",
+      "definition": "CREATE OR REPLACE FUNCTION public.preserve_semantic_source()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF TG_TABLE_NAME='policy_documents' THEN\r\n  IF (NEW.policy_id,NEW.original_text,NEW.sha256) IS DISTINCT FROM (OLD.policy_id,OLD.original_text,OLD.sha256)\r\n     AND EXISTS(SELECT 1 FROM document_chunks WHERE document_id=OLD.id) THEN\r\n   RAISE EXCEPTION 'Indexed policy document source is immutable';\r\n  END IF;\r\n ELSE\r\n  IF (NEW.document_id,NEW.chunk_number,NEW.content,NEW.embedding::text,NEW.metadata)\r\n     IS DISTINCT FROM (OLD.document_id,OLD.chunk_number,OLD.content,OLD.embedding::text,OLD.metadata)\r\n     AND EXISTS(SELECT 1 FROM semantic_matches WHERE chunk_id=OLD.id) THEN\r\n   RAISE EXCEPTION 'Retrieved policy passage is immutable';\r\n  END IF;\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "prevent_audit_rewrite",
+      "definition": "CREATE OR REPLACE FUNCTION public.prevent_audit_rewrite()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n RAISE EXCEPTION 'Audit events are immutable';\r\nEND $function$\n"
+    },
+    {
+      "proname": "prevent_final_decision_rewrite",
+      "definition": "CREATE OR REPLACE FUNCTION public.prevent_final_decision_rewrite()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n RAISE EXCEPTION 'Final claim decisions are immutable';\r\nEND $function$\n"
+    },
+    {
+      "proname": "validate_claim_ownership",
+      "definition": "CREATE OR REPLACE FUNCTION public.validate_claim_ownership()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE actual_owner uuid;\r\nBEGIN\r\n SELECT rp.customer_id INTO actual_owner FROM warranties w\r\n JOIN registered_products rp ON rp.id = w.product_id WHERE w.id = NEW.warranty_id;\r\n IF actual_owner IS DISTINCT FROM NEW.customer_id THEN\r\n  RAISE EXCEPTION 'Claim customer does not own the warranted product';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "validate_deciding_officer",
+      "definition": "CREATE OR REPLACE FUNCTION public.validate_deciding_officer()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF NOT EXISTS(SELECT 1 FROM app_users WHERE id=NEW.officer_id AND role='officer' AND is_active) THEN\r\n  RAISE EXCEPTION 'Decision requires an active officer';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "validate_officer_assignment",
+      "definition": "CREATE OR REPLACE FUNCTION public.validate_officer_assignment()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF NOT EXISTS(SELECT 1 FROM app_users WHERE id = NEW.officer_id AND role = 'officer' AND is_active) THEN\r\n  RAISE EXCEPTION 'Assigned user is not an active officer';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "validate_registered_customer",
+      "definition": "CREATE OR REPLACE FUNCTION public.validate_registered_customer()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF NOT EXISTS(SELECT 1 FROM app_users WHERE id=NEW.customer_id AND role='customer' AND is_active) THEN\r\n  RAISE EXCEPTION 'Registered product requires an active customer';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "validate_semantic_match_scope",
+      "definition": "CREATE OR REPLACE FUNCTION public.validate_semantic_match_scope()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n IF NOT EXISTS (\r\n  SELECT 1 FROM warranty_claims c\r\n  JOIN warranties w ON w.id = c.warranty_id\r\n  JOIN policy_documents d ON d.policy_id = w.policy_id\r\n  JOIN document_chunks ch ON ch.document_id = d.id\r\n  WHERE c.id = NEW.claim_id AND ch.id = NEW.chunk_id\r\n ) THEN\r\n  RAISE EXCEPTION 'Semantic match must reference a chunk from the claim policy';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    },
+    {
+      "proname": "validate_warranty",
+      "definition": "CREATE OR REPLACE FUNCTION public.validate_warranty()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE owner_manufacturer uuid; policy_manufacturer uuid; purchase date;\r\n        effective date; months integer;\r\nBEGIN\r\n SELECT pm.manufacturer_id,rp.purchased_on INTO owner_manufacturer,purchase\r\n FROM registered_products rp JOIN product_models pm ON pm.id=rp.model_id WHERE rp.id=NEW.product_id;\r\n SELECT manufacturer_id,effective_from,coverage_months INTO policy_manufacturer,effective,months\r\n FROM warranty_policies WHERE id=NEW.policy_id;\r\n IF owner_manufacturer IS DISTINCT FROM policy_manufacturer THEN\r\n  RAISE EXCEPTION 'Warranty policy manufacturer differs from the product manufacturer';\r\n END IF;\r\n IF purchase<effective THEN RAISE EXCEPTION 'Policy was not effective on the purchase date'; END IF;\r\n IF NEW.start_date IS DISTINCT FROM purchase\r\n    OR NEW.end_date IS DISTINCT FROM ((purchase+make_interval(months=>months))::date-1) THEN\r\n  RAISE EXCEPTION 'Warranty dates must match the purchase and inclusive policy coverage';\r\n END IF;\r\n RETURN NEW;\r\nEND $function$\n"
+    }
+  ],
+  "migrations": [
+    "001_init.sql",
+    "002_repair_lifecycle.sql",
+    "003_claim_state_integrity.sql",
+    "004_temporal_integrity.sql",
+    "005_audit_integrity.sql",
+    "006_warranty_validation.sql"
+  ]
+}

@@ -1,0 +1,16 @@
+
+> claimlens@1.0.0 db:migrate
+> node scripts/doctor.mjs && tsx scripts/migrate.ts
+
+PASS DATABASE_URL includes a host, user, password and database
+PASS SESSION_SECRET configured
+PASS SEED_DEMO_PASSWORD configured
+PASS PostgreSQL TCP port reachable
+Note: Port reachability does not verify credentials or migrations; run npm run db:migrate and npm run db:smoke.
+Already applied: 001_init.sql
+Already applied: 002_repair_lifecycle.sql
+Already applied: 003_claim_state_integrity.sql
+Already applied: 004_temporal_integrity.sql
+Already applied: 005_audit_integrity.sql
+Already applied: 006_warranty_validation.sql
+Already applied: 007_consolidate_integrity_guards.sql

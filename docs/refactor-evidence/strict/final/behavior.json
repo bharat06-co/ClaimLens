@@ -1,0 +1,9 @@
+{
+  "command": [
+    "node",
+    "scripts/review-dbms-behavior.mjs"
+  ],
+  "exitCode": 0,
+  "seconds": 12.2,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

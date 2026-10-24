@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-24",
+  "baselineCommit": "d01824ffa6dc946a65d232934e35e44ff6d9b82e",
+  "supersedesReviewCommit": "23ec534cf2fa2a49eedf5b231b30ba5dcdbd801f",
+  "branch": "codex/dbms-refactor-review",
+  "allLocalGatesPassed": true,
+  "strictDecisionInsertCompatibilityVerified": true,
+  "originalBeforeAndAfterInsertDefinitionsUnchanged": true,
+  "structuralCounts": {
+    "tables": {
+      "baseline": 16,
+      "corrected": 16
+    },
+    "columns": {
+      "baseline": 94,
+      "corrected": 94
+    },
+    "constraints": {
+      "baseline": 66,
+      "corrected": 66
+    },
+    "indexes": {
+      "baseline": 39,
+      "corrected": 39
+    },
+    "views": {
+      "baseline": 3,
+      "corrected": 3
+    },
+    "triggers": {
+      "baseline": 21,
+      "corrected": 18
+    },
+    "triggerFunctions": {
+      "baseline": 20,
+      "corrected": 16
+    }
+  },
+  "seedRowsPreserved": 27,
+  "relationalDefinitionsUnchanged": true,
+  "results": {
+    "unitStatic": 18,
+    "cleanMigrations": 7,
+    "smoke": "PASS",
+    "integrity": 38,
+    "guardCases": 47,
+    "strictSqlCases": 6,
+    "strictSqlStatementExecutions": 18,
+    "sqlConcurrency": 5,
+    "migrationSafety": 5,
+    "productionHttp": 78,
+    "extraHttp": 19,
+    "invariantsPassed": 10,
+    "invariantViolations": 0,
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "dependencyVulnerabilities": 0
+  },
+  "guidelines": {
+    "all17SectionsReviewed": true,
+    "technicalCapabilitiesRetained": true,
+    "humanConditions": [
+      "Title uniqueness",
+      "Approved two-member team",
+      "Both members DB/application contributions",
+      "Individual viva explanation",
+      "Originality"
+    ]
+  },
+  "manualBrowserRepeatedThisFollowup": false,
+  "privateDatabaseTargeted": false,
+  "mainModifiedOrMerged": false,
+  "remotePush": false,
+  "disposableContainerRemoved": true,
+  "limits": [
+    "No manual GUI rerun in this follow-up",
+    "No private-data migration/restore, crash/load/other PostgreSQL versions or deployed HTTPS tests",
+    "No universal SQL-equivalence proof beyond original decision insert definitions and executed cases"
+  ]
+}

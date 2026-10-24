@@ -1,0 +1,10 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.cmd",
+    "run",
+    "db:seed"
+  ],
+  "exitCode": 0,
+  "seconds": 15.15,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

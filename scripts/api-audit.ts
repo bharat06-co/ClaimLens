@@ -135,7 +135,10 @@ async function main(){
    await expect('inactive user mutation denied','/api/claims',payload,401,cookie);
   }finally{await db.query('UPDATE app_users SET is_active=true WHERE id=$1',[customer.id]);}
   mkdirSync('docs/audit-evidence',{recursive:true});mkdirSync('audit-private',{recursive:true});
-  const mode=new URL(base).port==='3002'?'production':'development';
+  // A production review server can use a port other than the original 3002.
+  const configuredMode=process.env.AUDIT_MODE;
+  assert.ok(configuredMode===undefined || ['production','development'].includes(configuredMode),'Invalid AUDIT_MODE');
+  const mode=configuredMode ?? (new URL(base).port==='3002'?'production':'development');
   writeFileSync(`docs/audit-evidence/api-${mode}.json`,JSON.stringify({run,base,passed:tests.length,semantic:process.argv.includes('--semantic'),claimId:claim,tests},null,2));
   writeFileSync(`audit-private/api-${mode}-credentials.json`,JSON.stringify({email,password,run}),{mode:0o600});
   console.log(`PASS ${tests.length} HTTP/integration assertions. AUDIT fixtures retained; originals untouched.`);

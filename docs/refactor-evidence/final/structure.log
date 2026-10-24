@@ -1,0 +1,2 @@
+PASS: migration 007 applied, 16 tables, 17 triggers, 15 functions, vector(384), HNSW/GIN and correct bindings
+Read-only structural checks passed; run db:smoke + audit:db + audit:api for behavioral verification.

@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "scripts/verify-dbms-refactor.ts"
+  ],
+  "exitCode": 0,
+  "seconds": 0.93,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

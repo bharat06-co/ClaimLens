@@ -1,0 +1,13 @@
+{
+  "passed": 5,
+  "tests": [
+    "overlapping assignments serialize to one assignment",
+    "overlapping approval/rejection has one decision and one repair/audit",
+    "waiting repair completion sees committed in-progress state and two audits",
+    "competing terminal repair transitions cannot overwrite the winner",
+    "explicit transaction rollback removes approval and generated repair"
+  ],
+  "isolation": "READ COMMITTED",
+  "coordination": "Observed pg_stat_activity Lock before releasing winner",
+  "fixtures": "Synthetic committed rows retained only in disposable tmpfs database"
+}

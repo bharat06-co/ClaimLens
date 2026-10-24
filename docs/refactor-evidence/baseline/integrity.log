@@ -1,0 +1,41 @@
+
+> claimlens@1.0.0 audit:db
+> tsx scripts/db-audit.ts
+
+PASS unapproved repair insert
+PASS new claim terminal status
+PASS submitted issue immutability
+PASS submitted timestamp immutability
+PASS warranty dates immutability
+PASS product purchased_on immutability
+PASS product customer_id immutability
+PASS product serial_number immutability
+PASS referenced policy version immutability
+PASS registered model manufacturer immutability
+PASS claim warranty policy immutability
+PASS customer assignment prohibited
+PASS inactive officer assignment prohibited
+PASS assignment deletion prohibited
+PASS non-officer decision prohibited
+PASS inactive officer decision prohibited
+PASS repair cannot skip stages
+PASS repair cannot be rebound
+PASS repair cannot be deleted
+PASS repair opened date immutability
+PASS cancelled repair terminal
+PASS rejected claim cannot acquire repair
+PASS indexed document source immutability
+PASS indexed document policy immutability
+PASS retrieved passage immutability
+PASS similarity bounds
+PASS rank bounds
+PASS vector dimensions
+PASS case-insensitive duplicate identity
+PASS duplicate serial registration
+PASS future purchase
+PASS purchase before policy effective date
+PASS direct warranty dates must match purchase
+PASS direct product cannot belong to officer
+PASS foreign key protection
+PASS unsafe evidence protocol
+PASS 38 extended integrity assertions; all writes rolled back.

@@ -1,0 +1,9 @@
+{
+  "command": [
+    "node",
+    "scripts/review-dbms-concurrency.mjs"
+  ],
+  "exitCode": 0,
+  "seconds": 0.55,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

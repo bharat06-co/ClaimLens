@@ -1,0 +1,26 @@
+{
+  "passed": 19,
+  "tests": [
+    "seed customer authenticates",
+    "assigned officer authenticates",
+    "distinct second officer authenticates",
+    "duplicate concurrent product registration returns 201/409",
+    "product race leaves one product and warranty without orphan",
+    "malformed decision identifier returns 400",
+    "malformed repair identifier returns 400",
+    "race fixture claim submitted",
+    "claim assigned to first officer",
+    "different active officer cannot decide",
+    "duplicate concurrent approval returns 200/409",
+    "HTTP approval race creates exactly one decision/repair/audit",
+    "different officer cannot change repair",
+    "customer cannot change approved repair",
+    "assigned officer starts repair",
+    "competing terminal HTTP updates return 200/400",
+    "competing repair writes preserve exactly two consistent audit transitions",
+    "deactivated second officer session cannot mutate",
+    "deactivated second officer cannot authenticate"
+  ],
+  "claimId": "f4012902-5bd3-463e-ab3f-46dafcc66f1c",
+  "fixtures": "Synthetic rows retained in disposable tmpfs DB only"
+}

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "migrations": [
+    "001_init.sql",
+    "002_repair_lifecycle.sql",
+    "003_claim_state_integrity.sql",
+    "004_temporal_integrity.sql",
+    "005_audit_integrity.sql",
+    "006_warranty_validation.sql",
+    "007_consolidate_integrity_guards.sql"
+  ],
+  "tables": 16,
+  "vectorDimensions": 384,
+  "hnsw": true,
+  "gin": true,
+  "mutations": "ROLLED BACK"
+}

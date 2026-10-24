@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-24",
+  "environment": "Production Next.js server at localhost:3004; disposable PostgreSQL/pgvector localhost:55433",
+  "status": "PASS for observed sequence",
+  "claimId": "4f40a3fa-7089-4e37-b15a-79356d3e941b",
+  "serial": "REVIEW-BROWSER-20261024",
+  "actions": [
+    "Registered synthetic customer in populated browser form",
+    "Registered Northstar N14 Pro with serial and 2026-10-24 purchase date",
+    "Verified displayed inclusive coverage 2026-10-24 through 2028-10-23",
+    "Submitted populated claim with evidence link and note",
+    "Customer viewed own submitted claim",
+    "Signed out and signed in as seeded officer",
+    "Searched dashboard for serial; one matching claim",
+    "Assigned claim to officer",
+    "Ran real semantic search: three policy passages returned",
+    "Recorded approval with detailed synthetic reason",
+    "Verified automatically generated open repair",
+    "Started repair; next option correctly became Mark completed",
+    "Completed repair; confirmed final state and activity history"
+  ],
+  "screenshots": [
+    "browser-approved-completed.png",
+    "browser-repair-completed.png"
+  ],
+  "notSeparateBrowserRuns": [
+    "Rejection",
+    "Cancellation",
+    "Second distinct officer authorization",
+    "Policy document ingestion",
+    "Exhaustive negative form cases"
+  ],
+  "note": "Those business paths have API/DB evidence; manual browser actions are not counted as automated assertions. Playwright label lookup failed on the pre-existing product form labels; native controls were used successfully."
+}

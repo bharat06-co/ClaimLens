@@ -1,0 +1,20 @@
+{
+  "artifact": "CLAIMLENS strict decision-insert-compatible refactor review",
+  "inputZip": "ClaimLens_Refactor_Patch.zip",
+  "inputZipSha256": "8f7169f0f6ccd7bbcc6a97e92efb8c01f57e01bbeb51ecfc9a21e1fd379d2301",
+  "sourceRepo": "https://github.com/bharat06-co/ClaimLens",
+  "sourceCommit": "d01824ffa6dc946a65d232934e35e44ff6d9b82e",
+  "reviewBranch": "codex/dbms-refactor-review",
+  "migration007UnchangedFromInput": false,
+  "migration007Sha256": "641140cf7ddbb9ce1b702a82da576cc885d42af69f398b13b71867754ff4b364",
+  "allRequestedLocalGatesPassed": true,
+  "reviewSummary": "docs/refactor-evidence/strict/review-summary.json",
+  "results": "docs/DBMS_STRICT_COMPATIBILITY_RESULTS.md",
+  "changeLog": "CHANGELOG_REFACTOR_REVIEW.md",
+  "inputManifest": "docs/refactor-evidence/input-overlay-manifest.json",
+  "candidateRemoteCI": "Not run; local commit only",
+  "existingDatabaseMigrated": false,
+  "strictDirectSqlErrorEquivalenceForReportedCases": true,
+  "originalDecisionInsertDefinitionsUnchanged": true,
+  "supersededReviewCommit": "23ec534cf2fa2a49eedf5b231b30ba5dcdbd801f"
+}

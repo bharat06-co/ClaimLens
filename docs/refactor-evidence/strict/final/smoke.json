@@ -1,0 +1,10 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.cmd",
+    "run",
+    "db:smoke"
+  ],
+  "exitCode": 0,
+  "seconds": 1.92,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

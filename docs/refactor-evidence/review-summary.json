@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-24",
+  "baselineCommit": "d01824ffa6dc946a65d232934e35e44ff6d9b82e",
+  "branch": "codex/dbms-refactor-review",
+  "structuralCounts": {
+    "tables": {
+      "before": 16,
+      "after": 16
+    },
+    "columns": {
+      "before": 94,
+      "after": 94
+    },
+    "constraints": {
+      "before": 66,
+      "after": 66
+    },
+    "indexes": {
+      "before": 39,
+      "after": 39
+    },
+    "views": {
+      "before": 3,
+      "after": 3
+    },
+    "triggers": {
+      "before": 21,
+      "after": 17
+    },
+    "triggerFunctions": {
+      "before": 20,
+      "after": 15
+    }
+  },
+  "rowsUnchangedBy007": 84,
+  "definitionsUnchanged": true,
+  "allLocalGatesPassed": true,
+  "results": {
+    "unit": {
+      "passed": 17,
+      "failed": 0
+    },
+    "databaseIntegrity": {
+      "passed": 38,
+      "failed": 0
+    },
+    "originalProductionHTTP": {
+      "passed": 78,
+      "failed": 0
+    },
+    "extraHTTP": {
+      "passed": 19,
+      "failed": 0
+    },
+    "targetedGuardCases": {
+      "passed": 41,
+      "failed": 0
+    },
+    "sqlConcurrency": {
+      "passed": 5,
+      "failed": 0
+    },
+    "migrationSafety": {
+      "passed": 5,
+      "failed": 0
+    },
+    "cleanMigrations": {
+      "passed": 7,
+      "failed": 0
+    },
+    "invariants": {
+      "passed": 10,
+      "violations": 0
+    },
+    "smoke": "PASS",
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "dependencyVulnerabilities": 0,
+    "browser": "Observed populated end-to-end approval and repair completion"
+  },
+  "safeForTestedApplication": true,
+  "strictDirectSqlErrorContractEquivalent": false,
+  "privateDatabaseTouched": false,
+  "mainCheckoutModified": false,
+  "remotePushedOrMerged": false,
+  "cleanup": "Review app stopped; only disposable tmpfs container removed; user informed Docker Desktop may be closed",
+  "limits": [
+    "Direct SQL multi-error precedence and conflicting DO NOTHING behavior differ",
+    "No private database restore/migration run",
+    "No load/crash/deployed HTTPS/exhaustive browser or cross-table race matrix",
+    "Academic team/originality/viva conditions require human evidence"
+  ],
+  "evidence": "See DBMS_REFACTOR_RESULTS.md and per-suite JSON/log files; repeated runs not summed as new coverage"
+}

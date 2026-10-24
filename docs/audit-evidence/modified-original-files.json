@@ -1,0 +1,21 @@
+[
+  ".gitignore",
+  "README.md",
+  "app/api/claims/[id]/decision/route.ts",
+  "app/claims/[id]/page.tsx",
+  "app/dashboard/page.tsx",
+  "app/policies/[id]/page.tsx",
+  "app/products/new/page.tsx",
+  "components/ApiForm.tsx",
+  "components/ProductForm.tsx",
+  "docs/DATA_DICTIONARY.md",
+  "docs/PROJECT_REPORT.md",
+  "docs/VERIFICATION.md",
+  "lib/db.ts",
+  "lib/embedding.ts",
+  "lib/http.ts",
+  "lib/validation.ts",
+  "next-env.d.ts",
+  "package.json",
+  "scripts/db-smoke.ts"
+]

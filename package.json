@@ -1,0 +1,45 @@
+{
+  "name": "claimlens",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "setup:local": "node scripts/setup-local.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "predev": "node scripts/doctor.mjs",
+    "db:migrate": "node scripts/doctor.mjs && tsx scripts/migrate.ts",
+    "db:seed": "node scripts/doctor.mjs && tsx scripts/seed.ts",
+    "db:smoke": "node scripts/doctor.mjs && tsx scripts/db-smoke.ts",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts tests/*.test.mjs",
+    "test:setup": "node --test tests/local-setup.test.mjs",
+    "audit:db": "tsx scripts/db-audit.ts",
+    "audit:api": "tsx scripts/api-audit.ts --semantic",
+    "audit:embedding": "tsx scripts/audit-embedding.ts",
+    "audit:migrations": "tsx scripts/audit-migrations.ts",
+    "audit:preservation": "tsx scripts/audit-baseline.ts --verify"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.3.1",
+    "next": "^15.5.0",
+    "pg": "^8.16.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^4.0.0",
+    "dotenv": "^16.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.15.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "postcss": "^8.5.23",
+    "sharp": "^0.35.5"
+  }
+}

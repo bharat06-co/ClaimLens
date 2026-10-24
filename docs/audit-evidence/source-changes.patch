@@ -1,0 +1,523 @@
+--- original/.gitignore
++++ audited/.gitignore
+@@ -1,10 +1,10 @@
+ node_modules/
+ .next/
+-.env
+-.env.local
+-.env.production
++.env*
++!.env.example
+ *.log
+ *.tsbuildinfo
+ model-cache/
+ .DS_Store
+ coverage/
++audit-private/
+--- original/README.md
++++ audited/README.md
+@@ -2,6 +2,8 @@
+ **Warranty claim operations with policy-aware semantic retrieval**
+ 
+ A DBMS Level 3 experiential learning project. Customers register purchased products and submit warranty claims. Officers claim cases, inspect warranty eligibility at claim-submission time, retrieve semantically relevant policy clauses, document their decision, and advance approved repairs. PostgreSQL enforces key business rules; pgvector makes policy documents searchable without a second operational database. **No AI model makes the final decision.**
++
++**Local audit, 22 October 2026:** See [actual audit results](docs/AUDIT_RESULTS.md), [separate change log](CHANGELOG_AUDIT.md), and [runtime evidence](docs/audit-evidence/). The audited working copy is in `Documents/ChatGPT/DBMS/CLAIMLENS`; the original Downloads package is unchanged. Existing records were retained, with one explicitly approved legacy expiry correction. Audit test records are marked `AUDIT` and retained. Never run a database reset or reseed as an audit step.
+ 
+ ![Logical ER diagram](docs/er-diagram.png)
+ 
+@@ -10,7 +12,7 @@
+ - **Next.js 15 / React 19**: customer and officer interfaces, server-rendered pages and API routes.
+ - **PostgreSQL 17**: structured relational database, integrity constraints, triggers, functions, views, indexes and transactions.
+ - **pgvector**: 384-dimensional policy embeddings, HNSW cosine-distance index, scoped nearest-neighbor retrieval.
+-- **Transformers.js**, local `onnx-community/all-MiniLM-L6-v2-ONNX` model: 384-dimensional normalized embeddings. First run needs a network connection to download model files; later runs can reuse cached files.
++- **Transformers.js 4**, local `onnx-community/all-MiniLM-L6-v2-ONNX` model: 384-dimensional normalized fp32 CPU embeddings. First run needs a network connection to download model files into `HF_HOME`; later runs can reuse cached files. The upgraded runtime was checked against existing stored vectors.
+ - **Node.js 22+**, Docker with Docker Compose (recommended), TypeScript.
+ 
+ ### Setup and run
+@@ -64,7 +66,7 @@
+ 
+ ### End-to-end demonstration
+ 
+-1. Start PostgreSQL, run migrations and seed; explain all four SQL migrations, including `003_claim_state_integrity.sql` and `004_temporal_integrity.sql`.
++1. Start PostgreSQL, run migrations and seed; explain all six SQL migrations, including `003_claim_state_integrity.sql` and `004_temporal_integrity.sql`.
+ 2. Sign in as **customer**. Open dashboard, inspect the pre-registered fictional laptop, or register another fictional product; create a claim and add an optional evidence URL.
+ 3. Sign out and sign in as **officer**. Filter the claim queue by status or search by serial number.
+ 4. Open a `submitted` claim; choose **Assign to me**. Confirm `submitted -> in_review` and the assignment audit record.
+@@ -111,7 +113,7 @@
+ - Evidence is provided as an HTTPS/HTTP **link** in this version, not uploaded file storage. Verify third-party files before opening; do not enter sensitive production information into a classroom demo.
+ - Officer accounts and catalog/policies are provisioned by the seed script rather than a public admin UI.
+ - Warranty coverage is modeled by dates and policy rules. Real decisions require human investigation, local law and real manufacturer terms. Demo policy text is fictional.
+-- Semantic matches are additionally verified against the exact policy attached to the claim at the database level. A local classroom deployment is the target; use HTTPS, CSRF protection, additional rate limiting, hardened session management, monitoring, and separate least-privilege DB roles before production use.
++- Semantic matches are additionally verified against the exact policy attached to the claim at the database level. A local classroom deployment is the target; use HTTPS, rate limiting, persistent session revocation, monitoring, and separate least-privilege DB roles before production use. Same-origin mutation checks are included in the audited application.
+ - Demo seed invokes the local embedding model which may download model assets on first invocation. Docker/npm/model/network setup cannot be skipped.
+ 
+ ### Level 3 guideline checklist
+@@ -134,7 +136,7 @@
+ 
+ ## Repository publishing
+ 
+-After local validation, create a **public** GitHub repository under your own/team account and push the project. No public repository has been created by this source package.
++Only after explicit owner authorization, create a **public** GitHub repository under your own/team account and push the project. No public repository has been created by this source package.
+ 
+ ```bash
+ git init
+--- original/app/api/claims/[id]/decision/route.ts
++++ audited/app/api/claims/[id]/decision/route.ts
+@@ -1,6 +1,6 @@
+ import { NextResponse } from 'next/server';
+-import { query } from '@/lib/db';
+-import { requireApiUser, responseError } from '@/lib/http';
++import { transaction } from '@/lib/db';
++import { requireApiUser, responseError, ApiError } from '@/lib/http';
+ import { decisionSchema } from '@/lib/validation';
+ import { z } from 'zod';
+ export const runtime='nodejs';
+@@ -9,9 +9,17 @@
+     const u=await requireApiUser('officer');
+     const {id}=await ctx.params; z.uuid().parse(id);
+     const v=decisionSchema.parse(await req.json());
+-    // Trigger enforces assigned officer + in_review, updates claim and creates repair order.
+-    await query(`INSERT INTO claim_decisions(claim_id,officer_id,verdict,reason)
+-                 VALUES($1,$2,$3,$4)`,[id,u.id,v.verdict,v.reason]);
++    await transaction(async db => {
++      const claim=await db.query<{status:string;officer_id:string|null}>(
++        `SELECT c.status,a.officer_id FROM warranty_claims c LEFT JOIN claim_assignments a ON a.claim_id=c.id
++         WHERE c.id=$1 FOR UPDATE OF c`,[id]);
++      if(!claim.rows[0]) throw new ApiError(404,'Claim not found');
++      if(claim.rows[0].status!=='in_review') throw new ApiError(409,'Claim is not awaiting a decision');
++      if(claim.rows[0].officer_id!==u.id) throw new ApiError(403,'Only the assigned officer may decide this claim');
++      // Trigger independently enforces assignment, status, audit and repair creation.
++      await db.query(`INSERT INTO claim_decisions(claim_id,officer_id,verdict,reason)
++                   VALUES($1,$2,$3,$4)`,[id,u.id,v.verdict,v.reason]);
++    });
+     return NextResponse.json({ok:true});
+   } catch(e) {return responseError(e);}
+ }
+--- original/app/claims/[id]/page.tsx
++++ audited/app/claims/[id]/page.tsx
+@@ -6,6 +6,7 @@
+ import Status from '@/components/Status';
+ import ApiForm from '@/components/ApiForm';
+ import ActionButton from '@/components/ActionButton';
++import { z } from 'zod';
+ 
+ type Claim={id:string;customer_id:string;customer_name:string;issue_description:string;status:string;submitted_at:Date;manufacturer_name:string;model_name:string;serial_number:string;start_date:Date;end_date:Date;within_warranty_period:boolean;officer_id:string|null;assigned_officer:string|null;verdict:string|null;decision_reason:string|null;policy_id:string;policy_title:string};
+ type Evidence={id:string;evidence_url:string;note:string|null};
+@@ -14,7 +15,7 @@
+ type Repair={id:string;status:string;service_center:string|null;notes:string|null;opened_at:Date};
+ export default async function ClaimDetail({params}:{params:Promise<{id:string}>}){
+  const {id}=await params;const u=await requireSession();
+- if(!/^[a-f0-9-]{36}$/i.test(id))notFound();
++ if(!z.uuid().safeParse(id).success)notFound();
+  const r=await query<Claim>(`SELECT v.*,w.policy_id,p.title AS policy_title
+   FROM v_claim_overview v JOIN warranty_claims c ON c.id=v.id
+   JOIN warranties w ON w.id=c.warranty_id JOIN warranty_policies p ON p.id=w.policy_id
+--- original/app/dashboard/page.tsx
++++ audited/app/dashboard/page.tsx
+@@ -13,7 +13,7 @@
+  const customer=u.role==='customer';
+  const claims=await query<Claim>(
+   `SELECT id,customer_name,manufacturer_name,model_name,serial_number,status,submitted_at,assigned_officer,issue_description
+-   FROM v_claim_overview ${customer?'WHERE customer_id=$1':''} ORDER BY submitted_at DESC LIMIT 75`,
++   FROM v_claim_overview ${customer?'WHERE customer_id=$1':''} ORDER BY submitted_at DESC`,
+   customer?[u.id]:[]);
+  const counts=claims.rows.reduce((a,c)=>{a[c.status]=(a[c.status]||0)+1;return a;},{} as Record<string,number>);
+  let products:Product[]=[];let policies:Policy[]=[];
+--- original/app/policies/[id]/page.tsx
++++ audited/app/policies/[id]/page.tsx
+@@ -4,12 +4,13 @@
+ import {query} from '@/lib/db';
+ import ApiForm from '@/components/ApiForm';
+ import {dateText} from '@/lib/format';
++import { z } from 'zod';
+ type Policy={id:string;title:string;version:string;manufacturer_name:string;coverage_months:number};
+ type Doc={id:string;title:string;created_at:Date;chunk_count:number};
+ type Rule={id:string;kind:string;description:string};
+ export default async function PolicyDetails({params}:{params:Promise<{id:string}>}){
+  await requireSession('officer');const {id}=await params;
+- if(!/^[a-f0-9-]{36}$/i.test(id))notFound();
++ if(!z.uuid().safeParse(id).success)notFound();
+  const result=await query<Policy>(`SELECT p.id,p.title,p.version,p.coverage_months,m.name AS manufacturer_name
+  FROM warranty_policies p JOIN manufacturers m ON m.id=p.manufacturer_id WHERE p.id=$1`,[id]);
+  const p=result.rows[0];if(!p)notFound();
+--- original/app/products/new/page.tsx
++++ audited/app/products/new/page.tsx
+@@ -6,8 +6,8 @@
+  const models=await query<{id:string;manufacturer_id:string;model_name:string;manufacturer_name:string;category:string}>(
+  `SELECT pm.id,pm.manufacturer_id,pm.model_name,m.name AS manufacturer_name,pm.category
+   FROM product_models pm JOIN manufacturers m ON m.id=pm.manufacturer_id ORDER BY m.name,pm.model_name`);
+- const policies=await query<{id:string;manufacturer_id:string;title:string;version:string;coverage_months:number}>(
+- `SELECT id,manufacturer_id,title,version,coverage_months FROM warranty_policies ORDER BY title`);
++ const policies=await query<{id:string;manufacturer_id:string;title:string;version:string;coverage_months:number;effective_from:string}>(
++ `SELECT id,manufacturer_id,title,version,coverage_months,effective_from::text FROM warranty_policies ORDER BY title`);
+  return <main className="shell content"><div className="pagehead"><div><div className="eyebrow">STEP 01 / PRODUCT ONBOARDING</div><h1>Register a product</h1><p className="muted">Attach an existing manufacturer's warranty policy to your purchase.</p></div></div>
+  <section className="panel narrow">{models.rows.length?<ProductForm models={models.rows} policies={policies.rows}/>:<p>No products are configured. Ask an officer to initialize the demo catalog.</p>}</section></main>;
+ }
+--- original/components/ApiForm.tsx
++++ audited/components/ApiForm.tsx
+@@ -7,14 +7,17 @@
+ export default function ApiForm({endpoint, fields,submitText,successPath='/dashboard',method='POST'}:{
+  endpoint:string;fields:InputField[];submitText:string;successPath?:string;method?:'POST'|'PUT';
+ }){
+- const [error,setError]=useState(''); const [loading,setLoading]=useState(false);const router=useRouter();
++ const [error,setError]=useState(''); const [success,setSuccess]=useState(''); const [loading,setLoading]=useState(false);const router=useRouter();
+  async function submit(e:FormEvent<HTMLFormElement>){
+-  e.preventDefault(); setError('');setLoading(true);
+-  const data=Object.fromEntries(new FormData(e.currentTarget).entries());
++  e.preventDefault(); setError('');setSuccess('');setLoading(true);
++  const form=e.currentTarget;
++  const data=Object.fromEntries(new FormData(form).entries());
+   try{
+    const res=await fetch(endpoint,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const result=await res.json();
+    if(!res.ok) throw new Error(result.error ?? 'Request failed');
++   setSuccess(typeof result.chunkCount==='number'?`Document indexed successfully: ${result.chunkCount} passage(s).`:'Saved successfully.');
++   form.reset();
+    router.push(successPath==='CLAIM'&&result.id?`/claims/${result.id}`:successPath);router.refresh();
+   }catch(err){setError(err instanceof Error?err.message:'Unexpected error');}
+   finally{setLoading(false);}
+@@ -22,12 +25,13 @@
+  return <form className="formstack" onSubmit={submit}>
+   {fields.map(f=><label className="field" key={f.name}><span>{f.label}</span>
+    {f.type==='textarea'?<textarea name={f.name} rows={5} required={f.required} minLength={f.minLength} maxLength={f.maxLength} placeholder={f.placeholder} defaultValue={f.defaultValue}/>:
+-   f.type==='select'?<select name={f.name} required={f.required} defaultValue={f.defaultValue}>
++   f.type==='select'?<select key={f.options?.map(o=>o.value).join('|')} name={f.name} required={f.required} defaultValue={f.defaultValue??f.options?.[0]?.value}>
+      {f.options?.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+    </select>:<input name={f.name} type={f.type??'text'} required={f.required} minLength={f.minLength} maxLength={f.maxLength} placeholder={f.placeholder} defaultValue={f.defaultValue}/>}
+    {f.hint?<small className="muted">{f.hint}</small>:null}
+   </label>)}
+   {error?<div className="error" role="alert">{error}</div>:null}
++  {success?<div className="notice" role="status">{success}</div>:null}
+   <button className="btn btn-primary" type="submit" disabled={loading}>{loading?'Working…':submitText} <span aria-hidden="true">↗</span></button>
+  </form>;
+ }
+--- original/components/ProductForm.tsx
++++ audited/components/ProductForm.tsx
+@@ -2,13 +2,14 @@
+ import { FormEvent,useState } from 'react';
+ import { useRouter } from 'next/navigation';
+ type Model={id:string;manufacturer_id:string;model_name:string;manufacturer_name:string;category:string};
+-type Policy={id:string;manufacturer_id:string;title:string;version:string;coverage_months:number};
++type Policy={id:string;manufacturer_id:string;title:string;version:string;coverage_months:number;effective_from:string};
+ export default function ProductForm({models,policies}:{models:Model[];policies:Policy[]}){
+  const router=useRouter();
+  const [modelId,setModelId]=useState(models[0]?.id??'');
++ const [purchaseDate,setPurchaseDate]=useState('');
+  const [error,setError]=useState('');const [busy,setBusy]=useState(false);
+  const model=models.find(m=>m.id===modelId);
+- const eligible=policies.filter(p=>p.manufacturer_id===model?.manufacturer_id);
++ const eligible=policies.filter(p=>p.manufacturer_id===model?.manufacturer_id && (!purchaseDate||p.effective_from<=purchaseDate));
+  async function submit(e:FormEvent<HTMLFormElement>){
+   e.preventDefault();setBusy(true);setError('');
+   const data=Object.fromEntries(new FormData(e.currentTarget).entries());
+@@ -23,11 +24,12 @@
+   <label className="field"><span>Product model</span><select value={modelId} onChange={e=>setModelId(e.target.value)} required>
+    {models.map(m=><option key={m.id} value={m.id}>{m.manufacturer_name} — {m.model_name} ({m.category})</option>)}
+   </select></label>
+-  <label className="field"><span>Applicable policy</span><select name="policyId" key={modelId} required>
++  <label className="field"><span>Applicable policy</span><select name="policyId" key={`${modelId}:${purchaseDate}`} required>
+    {eligible.map(p=><option key={p.id} value={p.id}>{p.title} · v{p.version} · {p.coverage_months} months</option>)}
+   </select></label>
+   <label className="field"><span>Product serial number</span><input name="serialNumber" required minLength={5} maxLength={100} placeholder="e.g. NTB-2026-A1842"/></label>
+-  <label className="field"><span>Purchase date</span><input type="date" name="purchaseDate" required max={new Date().toISOString().slice(0,10)} /></label>
++  <label className="field"><span>Purchase date</span><input type="date" name="purchaseDate" required value={purchaseDate} onInput={e=>setPurchaseDate(e.currentTarget.value)} onChange={e=>setPurchaseDate(e.target.value)} max={new Date().toISOString().slice(0,10)} /></label>
++  {purchaseDate&&!eligible.length?<p className="notice">No configured policy from this manufacturer was effective on the purchase date. Choose the correct purchase date or ask an officer to provision the applicable policy version.</p>:null}
+   <p className="muted small">A warranty record will be created automatically with the policy's coverage period. Serial numbers must be unique.</p>
+   {error?<div className="error" role="alert">{error}</div>:null}
+   <button className="btn btn-primary" disabled={!eligible.length ||busy}>{busy?'Registering…':'Register product ↗'}</button>
+--- original/docs/DATA_DICTIONARY.md
++++ audited/docs/DATA_DICTIONARY.md
+@@ -1,6 +1,6 @@
+ # Relational schema, data dictionary and key constraints
+ 
+-**SQL engine:** PostgreSQL 17. **Vector extension:** pgvector. **Keys:** all core entities use UUID primary keys (`gen_random_uuid()`), while `audit_events` uses a bigint identity. Foreign keys are `NOT NULL` unless optional. [Visual ER diagram](er-diagram.png). For the complete SQL types and precision, `db/migrations/001_init.sql` through `004_temporal_integrity.sql` are authoritative.
++**SQL engine:** PostgreSQL 17. **Vector extension:** pgvector. **Keys:** all core entities use UUID primary keys (`gen_random_uuid()`), while `audit_events` uses a bigint identity. Foreign keys are `NOT NULL` unless optional. [Visual ER diagram](er-diagram.png). For the complete SQL types and precision, `db/migrations/001_init.sql` through `006_warranty_validation.sql` are authoritative.
+ 
+ | Table | Primary key | Important attributes | Foreign keys | Constraints / purpose |
+ | --- | --- | --- | --- | --- |
+@@ -75,4 +75,13 @@
+ 
+ ## Temporal and officer assignment integrity (migration 004)
+ 
+-`v_claim_overview.within_warranty_period` compares the claim submission date with the warranty start/end dates, rather than checking the current date (which would change historic eligibility over time). `register_warranty` calculates the inclusive coverage end date. `trg_enforce_assignment_integrity` permits the first officer assignment only while a claim is `submitted` and forbids subsequent updates or deletes to preserve review history. Tests are included in the transactional `db:smoke` script and remain pending actual PostgreSQL execution.
++`v_claim_overview.within_warranty_period` compares the claim submission date with the warranty start/end dates, rather than checking the current date (which would change historic eligibility over time). `register_warranty` calculates the inclusive coverage end date. `trg_enforce_assignment_integrity` permits the first officer assignment only while a claim is `submitted` and forbids subsequent updates or deletes to preserve review history. Tests are included in the transactional `db:smoke` script and passed in the local PostgreSQL audit on 22 October 2026.
++
++
++## Audit integrity additions (005 and 006)
++
++Migration 005 preserves warranted product facts, claim warranty facts, referenced manufacturer/policy/source relationships, and retrieved passage content. It requires an active deciding officer, an approved recorded decision and initially open repair, and protects repair identity/history.
++
++Migration 006 enforces policy effective dates, warranty start/purchase agreement, inclusive end dates and active-customer product registration even for direct SQL. The 38 added rollback checks, original smoke suite and ten live consistency queries passed. See [AUDIT_RESULTS.md](AUDIT_RESULTS.md) for evidence and limits.
++
++One original demo expiry was corrected only after explicit owner approval; all other original fields are unchanged. The correction has its own audit entry and private pre-audit baseline.
+--- original/docs/PROJECT_REPORT.md
++++ audited/docs/PROJECT_REPORT.md
+@@ -4,7 +4,7 @@
+ **Project title:** CLAIMLENS — Warranty Claims and Semantic Policy Retrieval  
+ **Academic context:** DBMS Experiential Learning, Level 3  
+ **Team:** Two members (enter actual names/roll numbers before submission)  
+-**Implementation status:** Source implementation prepared; database and browser execution must be verified on a configured computer before final submission.
++**Implementation status:** Locally audited on 22 October 2026. Unit/setup 11/11, added DB checks 38/38, production HTTP checks 78/78, six clean-schema migrations, original smoke suite and production build passed. See [AUDIT_RESULTS.md](AUDIT_RESULTS.md) for evidence and limits. This Markdown report is current; the original PDF is a historical pre-audit snapshot.
+ 
+ ---
+ 
+@@ -110,7 +110,7 @@
+ 
+ ## 10. Authentication, authorization and validation
+ 
+-There are two roles: `customer` and `officer`. Public registration provisions customers only; demo officers are provisioned via the seed script. User passwords are salted with `scrypt`. User ID and expiry are signed using an HMAC-SHA256 session token held in a secure-in-production HTTP-only cookie. The backend re-reads user role and active status on each request. Customer-facing claim details check ownership, and officer mutation routes require an officer role. Zod validates incoming request types; PostgreSQL provides a second layer of constraints. Secrets are supplied by `.env`. Additional production controls (CSRF, rate limiting, access logs, policy retention and deployment security) are outside classroom-demo scope.
++There are two roles: `customer` and `officer`. Public registration provisions customers only; demo officers are provisioned via the seed script. User passwords are salted with `scrypt`. User ID and expiry are signed using an HMAC-SHA256 session token held in a secure-in-production HTTP-only cookie. The backend re-reads user role and active status on each request. Customer-facing claim details check ownership, and officer mutation routes require an officer role. Zod validates incoming request types; PostgreSQL provides a second layer of constraints. Secrets are supplied by `.env`. Same-origin mutation checks are implemented. Rate limiting, persistent session revocation, monitoring, retention and deployment hardening remain outside the verified classroom scope.
+ 
+ ## 11. Main workflows
+ 
+@@ -122,42 +122,39 @@
+ 
+ **Repair:** assigned officer moves a newly approved repair from `open` to `in_progress`, then `completed` or `cancelled`; DB checks transitions and audits changes.
+ 
+-## 12. Testing strategy and current evidence
++## 12. Executed testing evidence
+ 
+-| ID | Test | Expected result | Verification status |
+-| --- | --- | --- | --- |
+-| T1 | Password hash/verify and signed cookie expiry/tampering | Reject invalid/expired token | 5 isolated unit assertions passed after syntax transpilation; full npm test pending |
+-| T2 | Chunk overlap/size/vector serialization | Consistent windows and pgvector syntax | 5 isolated unit assertions passed after syntax transpilation; full npm test pending |
+-| T3 | Database tables, roles, vector dimensionality | All tables, 2 roles and vector(384) | Implemented `db:smoke`; execution pending PostgreSQL |
+-| T4 | Fraudulent customer attempts claim on someone else's warranty | DB trigger rejects insert | Implemented `db:smoke`; execution pending PostgreSQL |
+-| T5 | Officer final decision and repair workflow | Claim changes; audit + repair created atomically | Implemented `db:smoke`; execution pending PostgreSQL |
+-| T6 | Illegal repair-state transition | DB trigger blocks reversal | Implemented `db:smoke`; execution pending PostgreSQL |
+-| T9 | Bypass assignment via direct SQL claim status update | DB trigger blocks transition | Implemented negative savepoint test; execution pending PostgreSQL |
+-| T10 | Change final claim/decision history | Database rejects reopening claims and mutating decisions | Implemented negative savepoint tests; execution pending PostgreSQL |
+-| T11 | Delete audit history | Database rejects DELETE | Implemented negative savepoint test; execution pending PostgreSQL |
+-| T12 | Insert semantic evidence chunk from a different policy | DB trigger rejects cross-policy match | Implemented negative savepoint test; execution pending PostgreSQL |
+-| T13 | An already-submitted claim is reviewed after its warranty expires | Submission-time coverage remains correct | Implemented transactional check; execution pending PostgreSQL |
+-| T14 | Change officer assignment after a claim enters review | DB trigger preserves assignment history | Implemented negative savepoint test; execution pending PostgreSQL |
+-| T15 | Register a product with a fixed warranty period | Inclusive end date calculated without extra day | Implemented transactional check; execution pending PostgreSQL |
+-| T7 | Customer and officer browser task flows | Correct role and ownership behavior | Manual browser test pending |
+-| T8 | Policy-specific semantic retrieval | Retrieves relevant clauses from the linked policy | Manual test pending; no accuracy claim yet |
++| Area | Observed result |
++| --- | --- |
++| Passwords, sessions, chunks, vectors, validation, dates, setup/doctor | 11/11 unit/setup tests passed |
++| Original ownership, lifecycle, immutable history, policy scope and temporal smoke suite | Passed against local PostgreSQL; test writes rolled back |
++| Added integrity/role/date/reference guards | 38/38 assertions passed; writes rolled back |
++| Clean installation | Six migrations passed in temporary schema; 16 tables, vector(384), HNSW/GIN; schema rolled back |
++| HTTP and authorization | 73/73 development and 78/78 expanded production checks passed |
++| Browser | Populated registration, products, claims, assignment, retrieval, approval, rejection, repair completion and policy ingestion verified |
++| Real semantic search | Normalized 384-dimensional inference, policy isolation and compatibility with existing stored vectors passed |
++| SQL and live integrity | Ten invariants have zero violations; viva queries and query plans executed |
++| Build and dependencies | TypeScript/production build passed; npm audit zero vulnerabilities |
++| Preservation | 32 original rows retained; one explicitly approved expiry correction audited; every other original field and environment value unchanged |
+ 
+-**Only the isolated unit assertions were executed in this environment (five passed).** SQL and browser tests remain pending. See `VERIFICATION.md` for executed checks, environment blockers and commands. Capture database output and real screenshots before final submission. GitHub Actions configuration under `.github/workflows/verify.yml` specifies repeatable integration checks but has not been run, because the repository has not been published.
++See [audit results](AUDIT_RESULTS.md), [verification](VERIFICATION.md), [requirements matrix](REQUIREMENTS_AUDIT.md), and [separate change tracker](../CHANGELOG_AUDIT.md). No second distinct officer browser session, load/soak/fuzz run, exhaustive browser/accessibility matrix, restore drill or external deployment is claimed. Cancellation passed API/DB tests rather than a separate browser submission. Semantic examples were sampled rather than benchmarked. CI publication and genuine team attribution require human action.
+ 
+-## 13. Application screenshots (to capture at live demo)
++## 13. Real application screenshots
+ 
+-The final submitted report must include real screenshots captured from a running app, with no fabricated UI evidence:
++Captured from the running local app:
+ 
+-1. Customer sign-in and product registration screens.
+-2. Customer dashboard listing registered warranty and claim status.
+-3. Officer claim queue with a filter or search applied.
+-4. Claim detail showing policy evidence with similarity-ranked paragraphs.
+-5. Officer decision with reason, activity log and a generated repair order.
+-6. Policy details showing document-chunk count and structured rules.
++1. [Populated customer claim](audit-evidence/customer-claim-form.png).
++2. [Production customer outcomes](audit-evidence/customer-production.png).
++3. [Filtered officer queue](audit-evidence/officer-filter.png).
++4. [Actual semantic review](audit-evidence/semantic-review.png).
++5. [Completed repair and audit history](audit-evidence/completed-repair.png).
++6. [Policy indexing success](audit-evidence/policy-indexed.png).
++7. [Production rejection](audit-evidence/rejected-production.png).
++8. [Policy effective-date validation](audit-evidence/policy-date-blocked.png).
+ 
+ ## 14. Scope, limitations, and future work
+ 
+-The core database design and routes are implemented in source. Forty TS/TSX files passed a syntax transpilation check and five isolated unit tests passed. Browser, production and database-backed validation remain necessary. The scope deliberately targets classroom demonstration: evidence is represented as a link, policies are ingested as pasted text rather than PDF uploads, no automatic legally binding coverage decision is issued, and a public officer-management interface is not included. Useful future work includes file-storage upload, versioned source-document highlighting, configurable policy versions, retrieval quality evaluation and authenticated admin provisioning.
++The executed local database, browser, HTTP and production checks passed. Exact test limits remain in AUDIT_RESULTS.md; no exhaustive correctness or production deployment guarantee is claimed. The scope deliberately targets classroom demonstration: evidence is represented as a link, policies are ingested as pasted text rather than PDF uploads, no automatic legally binding coverage decision is issued, and a public officer-management interface is not included. Useful future work includes file-storage upload, versioned source-document highlighting, configurable policy versions, retrieval quality evaluation and authenticated admin provisioning.
+ 
+ ## 15. Conclusion
+ 
+--- original/docs/VERIFICATION.md
++++ audited/docs/VERIFICATION.md
+@@ -1,45 +1,22 @@
+-# Verification evidence / current status
++# Verification status — 22 October 2026
+ 
+-Updated on **22 October 2026**. All locally executed results below are from this authoring session; no database runtime is assumed.
++These are **executed local Windows audit results**, superseding the ZIP's authoring-only/pending notes. Full detail: [AUDIT_RESULTS.md](AUDIT_RESULTS.md).
+ 
+-## Executed in the authoring environment
++- **11/11** unit/setup tests, full TypeScript check and optimized production build passed.
++- Original PostgreSQL/pgvector smoke suite and **38/38** added integrity checks passed; writes rolled back.
++- **6/6** migrations passed in a clean temporary schema, rolled back afterward. 16 tables, vector(384), HNSW and GIN verified; reruns skip applied migrations.
++- **73/73** development HTTP checks and **78/78** expanded production HTTP checks passed; JSON evidence records their distinct revisions.
++- Real MiniLM inference and policy retrieval passed; upgraded runtime compatible with existing vectors.
++- Browser exercised populated registration/product/claim/decision/policy forms, both roles, filtering, assignment, semantic search, approval, production rejection, repair completion, errors, ownership and corrected policy-date filtering.
++- All **10 live-data invariants** passed. Viva DDL/DML/query examples and HNSW query plans executed.
++- Dependency audit reports **zero vulnerabilities** after updates.
++- All **32 original rows** retained. One expiry field corrected only after explicit owner approval and audited; every other original field unchanged. `.env` is byte-identical to original.
++- No reset/reseed, original claim mutation, extra permanent privileged account, password change or publishing. Marked AUDIT records retained.
+ 
+-- Syntax transpilation of **40 TS/TSX source and test files** with globally installed TypeScript: **0 syntax diagnostics**.
+-- Isolated Node.js test execution after TypeScript transpilation (no third-party packages loaded): **5 / 5 passed**:
+-  1. Blank policy text produces zero chunks.
+-  2. Overlapping chunk boundaries and final chunk are correct.
+-  3. Float array to pgvector literal formatting is correct.
+-  4. Salted scrypt passwords hash/verify correctly; invalid passwords fail.
+-  5. Signed session tokens reject tampering and expired tokens.
+-- PDF report generated (7 pages) and selected pages visually inspected.
++Production verified at `http://127.0.0.1:3002`. Fixes live in `Documents/ChatGPT/DBMS/CLAIMLENS`; original Downloads source/ZIP unchanged.
+ 
+-## Additional implementation completed
++## Explicit limits
+ 
+-- Added database migrations `003_claim_state_integrity.sql` and `004_temporal_integrity.sql`. The first: guards `submitted → in_review → approved/rejected`, freezes submitted claim facts, makes final decisions/audit events append-only, and prevents cross-policy semantic matches.
+-- Migration 004 adds submission-time warranty coverage checks, inclusive end dates, and immutable officer assignments.
+-- Expanded `db:smoke` with rollback-protected negative cases for unassigned review, reopening approved claims, editing final decisions, deleting audit records, deciding without a recorded verdict, and inserting a semantic match from an unrelated warranty policy, plus coverage-at-submission, inclusive dates and assignment immutability.
+-- Added `.github/workflows/verify.yml` for repeatable PostgreSQL + pgvector, unit, typecheck and build checks after publishing to GitHub. **The workflow has not run yet.**
++No second distinct officer browser flow, large-volume/load/soak run, exhaustive browser/accessibility matrix, restore drill or external deployment verification claimed. Cancellation passed API/DB checks, not separate browser submission. No broad semantic/legal accuracy guarantee. Production rate limiting/revocation/monitoring remain outside classroom scope. GitHub/team/instructor/originality evidence requires people.
+ 
+-## Not executed; requires local environment
+-
+-- `npm install` could not complete because npm registry DNS resolution failed (`EAI_AGAIN` for `registry.npmjs.org`). It is an environment/network issue; no claim of installed dependencies is made.
+-- Docker and `psql` are not present here. PostgreSQL migrations, seed, relational/vector operations, SQL smoke test, and browser UI could **not** be executed.
+-- Therefore full TypeScript typechecking against installed packages (`npm run typecheck`), Next.js optimized build (`npm run build`), and screenshot capture remain pending.
+-- Vector retrieval relevance and runtime embedding inference are not yet measured.
+-- Public GitHub repository creation/push requires the team's authenticated GitHub account.
+-
+-## Required verification before demonstration / submission
+-
+-1. Install dependencies and provision DB: `npm install`, `docker compose up -d db`.
+-2. Run `npm run db:migrate`, `npm run db:seed`, `npm run db:smoke`, `npm test`, `npm run typecheck`, `npm run build`.
+-3. Launch `npm run dev`, walk through the demo steps in the README with both roles and capture real screenshots.
+-4. Inspect SQL `EXPLAIN` plans and run the database viva queries; capture query output.
+-5. Perform at least one real claim-to-policy semantic search and verify retrieved passages are relevant.
+-6. Create and publish the public GitHub repository; verify members' real contributions.
+-7. Update `PROJECT_REPORT.md` and re-run `python scripts/generate_report_pdf.py` after replacing the test/status placeholders with actual observed evidence.
+-
+-This separation between implemented source and verified runtime is intentional: the report should contain facts, not claimed results that were never observed.
+-
+-## 2026-10-22 environment hotfix
+-
+-A Windows run reported a working PostgreSQL container and successful TypeScript/build checks but HTTP 500 during customer registration. Its runtime stack trace showed `DATABASE_URL is not configured`; the extracted ZIP intentionally did not include `.env`. This hotfix adds `npm run setup:local` (generates local secrets without overwriting existing `.env`), `npm run doctor` (validates configuration and checks TCP reachability), and clearer error handling for missing runtime configuration. Local sandbox tests of the setup/doctor code were performed, but end-to-end PostgreSQL and browser execution were **not** possible inside the authoring sandbox because PostgreSQL is not installed and npm registry DNS is unavailable. Do not claim live deployment validation based on those checks.
++The original `PROJECT_REPORT.pdf` was not regenerated and remains historical. Use the current Markdown reports and [real evidence](audit-evidence/) for the audit verdict.
+--- original/lib/db.ts
++++ audited/lib/db.ts
+@@ -1,4 +1,8 @@
+-import { Pool, PoolClient, QueryResultRow } from 'pg';
++import { Pool, PoolClient, QueryResultRow, types } from 'pg';
++
++// PostgreSQL DATE has no time zone. Keep it as YYYY-MM-DD rather than turning
++// local midnight into a UTC instant (which displays the previous day in India).
++types.setTypeParser(1082, value => value);
+ 
+ const globalPg = globalThis as typeof globalThis & { __claimlensPool?: Pool };
+ 
+--- original/lib/embedding.ts
++++ audited/lib/embedding.ts
+@@ -5,10 +5,12 @@
+ let instance: Promise<Embedder> | undefined;
+ 
+ async function loadEmbedder(): Promise<Embedder> {
+-  const { pipeline } = await import('@huggingface/transformers');
++  const { pipeline, env } = await import('@huggingface/transformers');
++  env.cacheDir = process.env.HF_HOME || './model-cache';
+   const extractor = await pipeline(
+     'feature-extraction',
+-    'onnx-community/all-MiniLM-L6-v2-ONNX'
++    'onnx-community/all-MiniLM-L6-v2-ONNX',
++    { dtype: 'fp32', device: 'cpu' }
+   );
+ 
+   return async (text: string): Promise<number[]> => {
+--- original/lib/http.ts
++++ audited/lib/http.ts
+@@ -13,6 +13,7 @@
+   return user;
+ }
+ export function responseError(error: unknown) {
++  if (error instanceof SyntaxError) return NextResponse.json({ error: 'Request body must contain valid JSON' }, { status: 400 });
+   if (error instanceof ApiError) return NextResponse.json({ error: error.message }, { status: error.status });
+   if (error instanceof ZodError) return NextResponse.json({ error: error.issues[0]?.message ?? 'Invalid input' }, { status: 400 });
+   if (error instanceof Error && (error.message === 'DATABASE_URL is not configured' || error.message.startsWith('SESSION_SECRET must'))) {
+--- original/lib/validation.ts
++++ audited/lib/validation.ts
+@@ -1,5 +1,5 @@
+ import { z } from 'zod';
+-export const email = z.email().max(254).transform(x => x.toLowerCase().trim());
++export const email = z.string().trim().toLowerCase().pipe(z.email().max(254));
+ export const loginSchema = z.object({ email, password: z.string().min(1).max(200) });
+ export const registerSchema = z.object({
+   fullName: z.string().trim().min(2).max(120), email,
+--- original/next-env.d.ts
++++ audited/next-env.d.ts
+@@ -1,3 +1,6 @@
+ /// <reference types="next" />
+ /// <reference types="next/image-types/global" />
+-// This file is managed by Next.js.
++/// <reference path="./.next/types/routes.d.ts" />
++
++// NOTE: This file should not be edited
++// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+--- original/package.json
++++ audited/package.json
+@@ -13,11 +13,16 @@
+     "build": "next build",
+     "start": "next start",
+     "typecheck": "tsc --noEmit",
+-    "test": "node --import tsx --test tests/*.test.ts",
+-    "test:setup": "node --test tests/local-setup.test.mjs"
++    "test": "node --import tsx --test tests/*.test.ts tests/*.test.mjs",
++    "test:setup": "node --test tests/local-setup.test.mjs",
++    "audit:db": "tsx scripts/db-audit.ts",
++    "audit:api": "tsx scripts/api-audit.ts --semantic",
++    "audit:embedding": "tsx scripts/audit-embedding.ts",
++    "audit:migrations": "tsx scripts/audit-migrations.ts",
++    "audit:preservation": "tsx scripts/audit-baseline.ts --verify"
+   },
+   "dependencies": {
+-    "@huggingface/transformers": "^3.7.0",
++    "@huggingface/transformers": "^4.3.1",
+     "next": "^15.5.0",
+     "pg": "^8.16.0",
+     "react": "^19.1.0",
+@@ -32,5 +37,9 @@
+     "@types/react-dom": "^19.0.0",
+     "tsx": "^4.20.0",
+     "typescript": "^5.9.0"
++  },
++  "overrides": {
++    "postcss": "^8.5.23",
++    "sharp": "^0.35.5"
+   }
+ }
+--- original/scripts/db-smoke.ts
++++ audited/scripts/db-smoke.ts
+@@ -70,18 +70,21 @@
+      [warranty_id,customer_id]);
+    const claimId=inserted.rows[0].id;
+    // Verify a historically timely submission stays eligible after later expiry.
++   const historicPolicy=await client.query<{id:string}>(`INSERT INTO warranty_policies
++    (manufacturer_id,title,version,coverage_months,effective_from)
++    SELECT manufacturer_id,$2,'smoke',1,CURRENT_DATE-365 FROM warranty_policies WHERE id=$1 RETURNING id`,
++    [policySample.policy_id,`SMOKE historical ${Date.now()}`]);
++   const historicWarranty=await client.query<{id:string}>(
++    `SELECT register_warranty($1,$2,$3,CURRENT_DATE-40,$4) AS id`,
++    [customer_id,policySample.model_id,`SMOKE-HIST-${Date.now()}`,historicPolicy.rows[0].id]);
+    const historical=await client.query<{id:string}>(`INSERT INTO warranty_claims
+     (warranty_id,customer_id,issue_description,submitted_at)
+     VALUES($1,$2,'Historical synthetic issue: intermittent faults during covered operation',
+-       CURRENT_DATE - INTERVAL '10 days') RETURNING id`,[warranty_id,customer_id]);
+-   const originalEnd=await client.query<{end_date:Date}>(`SELECT end_date FROM warranties WHERE id=$1`,[warranty_id]);
+-   await client.query(`UPDATE warranties SET end_date=(CURRENT_DATE - INTERVAL '5 days')::date
+-      WHERE id=$1`,[warranty_id]);
++       CURRENT_DATE - INTERVAL '20 days') RETURNING id`,[historicWarranty.rows[0].id,customer_id]);
+    const historicalView=await client.query<{within_warranty_period:boolean}>(
+       `SELECT within_warranty_period FROM v_claim_overview WHERE id=$1`,[historical.rows[0].id]);
+    assert.equal(historicalView.rows[0].within_warranty_period,true,
+      'Coverage must be evaluated at claim submission, not at later review');
+-   await client.query(`UPDATE warranties SET end_date=$2 WHERE id=$1`,[warranty_id,originalEnd.rows[0].end_date]);
+    const initialAudit=await client.query(`SELECT 1 FROM audit_events
+      WHERE entity_id=$1 AND event_type='claim_submitted'`,[claimId]);
+    assert.equal(initialAudit.rowCount,1,'Claim submission trigger must produce audit');

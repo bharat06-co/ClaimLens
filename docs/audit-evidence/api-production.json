@@ -1,0 +1,321 @@
+{
+  "run": "1792681081488-3b91e7",
+  "base": "http://127.0.0.1:3002",
+  "passed": 78,
+  "semantic": true,
+  "claimId": "2b9d5d1a-16a6-456c-bac8-67300812c5e6",
+  "tests": [
+    {
+      "name": "anonymous dashboard redirects",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous denied api/products",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous denied api/claims",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous denied api/claims",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous denied api/claims",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous denied api/claims",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous denied api/repairs",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous denied api/policies",
+      "status": "PASS"
+    },
+    {
+      "name": "malformed JSON is 400",
+      "status": "PASS"
+    },
+    {
+      "name": "cross-origin mutation denied",
+      "status": "PASS"
+    },
+    {
+      "name": "weak password rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "customer registration",
+      "status": "PASS"
+    },
+    {
+      "name": "session cookie HttpOnly and SameSite",
+      "status": "PASS"
+    },
+    {
+      "name": "registration cannot escalate role",
+      "status": "PASS"
+    },
+    {
+      "name": "case-insensitive duplicate email",
+      "status": "PASS"
+    },
+    {
+      "name": "incorrect password denied",
+      "status": "PASS"
+    },
+    {
+      "name": "trimmed uppercase login",
+      "status": "PASS"
+    },
+    {
+      "name": "tampered cookie rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "expired signed cookie rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "authenticated customer dashboard",
+      "status": "PASS"
+    },
+    {
+      "name": "customer cannot assign",
+      "status": "PASS"
+    },
+    {
+      "name": "customer cannot decide",
+      "status": "PASS"
+    },
+    {
+      "name": "customer cannot search policies",
+      "status": "PASS"
+    },
+    {
+      "name": "customer cannot ingest documents",
+      "status": "PASS"
+    },
+    {
+      "name": "customer cannot repair",
+      "status": "PASS"
+    },
+    {
+      "name": "customer blocked from officer policy page",
+      "status": "PASS"
+    },
+    {
+      "name": "manufacturer mismatch rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "future purchase rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "policy not yet effective rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid calendar date rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "product registration",
+      "status": "PASS"
+    },
+    {
+      "name": "void warranty claim denied",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate serial rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "inclusive warranty dates in database",
+      "status": "PASS"
+    },
+    {
+      "name": "second customer registration",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign warranty ownership denied",
+      "status": "PASS"
+    },
+    {
+      "name": "short issue rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "unsafe evidence rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "claim with evidence created",
+      "status": "PASS"
+    },
+    {
+      "name": "claim evidence saved atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "owner views own claim",
+      "status": "PASS"
+    },
+    {
+      "name": "other customer claim isolated",
+      "status": "PASS"
+    },
+    {
+      "name": "malformed claim URL is 404",
+      "status": "PASS"
+    },
+    {
+      "name": "existing officer login",
+      "status": "PASS"
+    },
+    {
+      "name": "officer cannot register customer product",
+      "status": "PASS"
+    },
+    {
+      "name": "officer cannot submit customer claim",
+      "status": "PASS"
+    },
+    {
+      "name": "officer policy page",
+      "status": "PASS"
+    },
+    {
+      "name": "malformed policy URL is 404",
+      "status": "PASS"
+    },
+    {
+      "name": "cannot decide unassigned claim",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown decision claim is 404",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrent assignment has one winner",
+      "status": "PASS"
+    },
+    {
+      "name": "short decision reason rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "real document ingestion",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate policy document rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "real semantic retrieval",
+      "status": "PASS"
+    },
+    {
+      "name": "repeat retrieval replaces ranks atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "retrieval policy isolation",
+      "status": "PASS"
+    },
+    {
+      "name": "claim approved",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate final decision blocked",
+      "status": "PASS"
+    },
+    {
+      "name": "approval automatically creates open repair",
+      "status": "PASS"
+    },
+    {
+      "name": "repair cannot skip start",
+      "status": "PASS"
+    },
+    {
+      "name": "repair starts",
+      "status": "PASS"
+    },
+    {
+      "name": "repair completes",
+      "status": "PASS"
+    },
+    {
+      "name": "completed repair cannot reopen",
+      "status": "PASS"
+    },
+    {
+      "name": "extra rejected claim",
+      "status": "PASS"
+    },
+    {
+      "name": "assign rejected case",
+      "status": "PASS"
+    },
+    {
+      "name": "record rejected case",
+      "status": "PASS"
+    },
+    {
+      "name": "rejected claim has no repair",
+      "status": "PASS"
+    },
+    {
+      "name": "extra approved claim",
+      "status": "PASS"
+    },
+    {
+      "name": "assign approved case",
+      "status": "PASS"
+    },
+    {
+      "name": "record approved case",
+      "status": "PASS"
+    },
+    {
+      "name": "open repair can cancel",
+      "status": "PASS"
+    },
+    {
+      "name": "submission assignment decision repair audit trail",
+      "status": "PASS"
+    },
+    {
+      "name": "resolved owner page",
+      "status": "PASS"
+    },
+    {
+      "name": "logout clears cookie",
+      "status": "PASS"
+    },
+    {
+      "name": "inactive user session rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "inactive user login denied",
+      "status": "PASS"
+    },
+    {
+      "name": "inactive user mutation denied",
+      "status": "PASS"
+    }
+  ]
+}

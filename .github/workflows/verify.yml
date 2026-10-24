@@ -1,0 +1,52 @@
+name: Verify CLAIMLENS
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  app-and-database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      db:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: claimlens
+          POSTGRES_PASSWORD: ci_only_password
+          POSTGRES_DB: claimlens
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U claimlens -d claimlens"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://claimlens:ci_only_password@127.0.0.1:5432/claimlens
+      SESSION_SECRET: ci-only-signed-session-secret-123456789012345
+      SEED_DEMO_PASSWORD: ClassroomDemo12345
+      HF_HOME: ${{ github.workspace }}/.hf-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/cache@v4
+        with:
+          path: .hf-cache
+          key: claimlens-minilm-onnx-v1
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Unit tests
+        run: npm test
+      - name: TypeScript type check
+        run: npm run typecheck
+      - name: Apply SQL migrations
+        run: npm run db:migrate
+      - name: Seed fictional policies and sample claim
+        run: npm run db:seed
+      - name: Transactional database assertions
+        run: npm run db:smoke
+      - name: Production app build
+        run: npm run build

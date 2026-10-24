@@ -1,0 +1,47 @@
+
+> claimlens@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.28
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 10.2s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/14) ...
+   Generating static pages (3/14)
+   Generating static pages (6/14)
+   Generating static pages (10/14)
+ ✓ Generating static pages (14/14)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                      162 B         106 kB
+├ ƒ /_not-found                            992 B         104 kB
+├ ƒ /api/auth/login                        147 B         103 kB
+├ ƒ /api/auth/logout                       147 B         103 kB
+├ ƒ /api/auth/register                     147 B         103 kB
+├ ƒ /api/claims                            147 B         103 kB
+├ ƒ /api/claims/[id]/assign                147 B         103 kB
+├ ƒ /api/claims/[id]/decision              147 B         103 kB
+├ ƒ /api/claims/[id]/matches               147 B         103 kB
+├ ƒ /api/policies/[id]/documents           147 B         103 kB
+├ ƒ /api/products                          147 B         103 kB
+├ ƒ /api/repairs/[id]                      147 B         103 kB
+├ ƒ /claims/[id]                         1.35 kB         108 kB
+├ ƒ /claims/new                          1.21 kB         107 kB
+├ ƒ /dashboard                           1.09 kB         107 kB
+├ ƒ /login                               1.21 kB         107 kB
+├ ƒ /policies/[id]                       1.21 kB         107 kB
+├ ƒ /products/new                         1.4 kB         104 kB
+└ ƒ /register                            1.21 kB         107 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/255-b1e2483a7e02feee.js       46.6 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          1.99 kB
+
+
+ƒ Middleware                             34.3 kB
+
+ƒ  (Dynamic)  server-rendered on demand

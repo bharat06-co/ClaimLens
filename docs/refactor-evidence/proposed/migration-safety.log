@@ -1,0 +1,6 @@
+PASS 007 applies in a fresh nonpublic schema
+PASS transaction rollback restores all original trigger bindings
+PASS late migration error leaves no partially consolidated schema
+PASS two concurrent fresh-install runners apply each of seven migrations exactly once
+PASS fresh-install rerun skips all seven migrations
+PASS 5 migration safety cases

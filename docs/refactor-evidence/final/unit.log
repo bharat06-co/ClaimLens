@@ -1,0 +1,29 @@
+
+> claimlens@1.0.0 test
+> node --import tsx --test tests/*.test.ts tests/*.test.mjs
+
+✔ SQL DATE stays a calendar date across local time zones (23.1612ms)
+✔ email normalization precedes validation (0.8864ms)
+✔ invalid dates, malformed identifiers and unsafe evidence are rejected (4.784ms)
+✔ cross-origin and cross-site mutations fail while local API clients work (29.2152ms)
+✔ empty input produces no chunks (2.08ms)
+✔ long policy splits into overlapping windows (0.6026ms)
+✔ vectorLiteral produces pgvector syntax (0.2882ms)
+✔ refactor expects the audited SQL migration baseline, not an older ZIP (6.0052ms)
+✔ refactor leaves table/view/index definitions and data untouched (0.6626ms)
+✔ refactor retains identity, authorization, dates, state transitions, audits (0.3338ms)
+✔ setup generates safe complete .env and never overwrites it (323.0093ms)
+✔ doctor explains absent .env instead of cryptic database exception (134.5425ms)
+✔ doctor accepts CI environment without a .env file and does not create one (198.2439ms)
+✔ doctor still rejects invalid configuration supplied through the environment (127.6117ms)
+✔ supplied environment overrides .env defaults without changing the file (116.0419ms)
+✔ scrypt hashes are salted and correct passwords verify (190.613ms)
+✔ signed sessions expire and tampering fails (1.2456ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1308.734

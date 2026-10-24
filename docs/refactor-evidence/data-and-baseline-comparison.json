@@ -1,0 +1,9 @@
+{
+  "baselineCommit": "d01824ffa6dc946a65d232934e35e44ff6d9b82e",
+  "all16TableRowHashesUnchangedBy007": true,
+  "disposableRowsPreserved": 84,
+  "relationalDefinitionsIdentical": true,
+  "historicalAndCurrent78ApiCaseNamesIdentical": true,
+  "productionServer": "next start on 127.0.0.1:3004; baseline build then schema upgrade",
+  "note": "The original API harness inferred mode from port 3002. These earlier baseline/proposed files have development in filename despite next start; final rerun uses corrected AUDIT_MODE=production."
+}

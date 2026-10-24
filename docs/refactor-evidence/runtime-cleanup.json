@@ -1,0 +1,11 @@
+{
+  "reviewContainerId": "35e94732d24bc949c13f8bcf1207d13503f301ef2f33f416fd676aef85c9858e",
+  "reviewStorage": "tmpfs; no shared volume",
+  "reviewApp": "Stopped localhost:3004 after final HTTP tests",
+  "existingDatabaseQueriedOrMigrated": false,
+  "userCanCloseDockerDesktop": true,
+  "date": "2026-10-24",
+  "reviewContainerRemoved": "/claimlens-refactor-review-20261024",
+  "existingVolumeMountRetained": "claimlens_claimlens_pgdata",
+  "existingContainerIdentityRetained": true
+}

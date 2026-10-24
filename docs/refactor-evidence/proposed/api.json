@@ -1,0 +1,10 @@
+{
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.cmd",
+    "run",
+    "audit:api"
+  ],
+  "exitCode": 0,
+  "seconds": 3.64,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

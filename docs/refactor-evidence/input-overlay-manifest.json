@@ -1,0 +1,46 @@
+{
+  "artifact": "CLAIMLENS isolated DBMS refactor review overlay",
+  "source_repo": "https://github.com/bharat06-co/ClaimLens",
+  "source_commit": "d01824ffa6dc946a65d232934e35e44ff6d9b82e",
+  "tests_run_here": [
+    "2 static node tests passed",
+    "5 SQL function body delimiters checked",
+    "schema objects checked by source inspection"
+  ],
+  "tests_not_run_here": [
+    "migration against PostgreSQL",
+    "db:smoke",
+    "audit:db",
+    "audit:api",
+    "audit:migrations",
+    "npm build",
+    "browser workflow"
+  ],
+  "files": [
+    {
+      "path": "README_APPLY.md",
+      "sha256": "6ab049e268451095c878568a7756d4e4d3f3cc02644317e65418f4992174cece",
+      "bytes": 1040
+    },
+    {
+      "path": "db/migrations/007_consolidate_integrity_guards.sql",
+      "sha256": "b26a9589325b2f855563057db4facb613f7d3ea584091878af637f774aa0198c",
+      "bytes": 6687
+    },
+    {
+      "path": "docs/DBMS_REFACTOR_REVIEW.md",
+      "sha256": "cfdab7b7ce7e3d95e619ccafaa011505eeab343e0564e9f4d5c30d30463034d2",
+      "bytes": 7297
+    },
+    {
+      "path": "scripts/verify-dbms-refactor.ts",
+      "sha256": "3d83ccc21c31a0271fe585e3ab8b7427c47df8c031df7f4a60fa54aab34296bb",
+      "bytes": 2955
+    },
+    {
+      "path": "tests/dbms-refactor.test.mjs",
+      "sha256": "b84ddd31124106a7f420510fb15084eeb711fdc859cddd63d4b8b7b0d06d6792",
+      "bytes": 2179
+    }
+  ]
+}

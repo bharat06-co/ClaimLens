@@ -1,0 +1,2 @@
+PASS: migration 007 applied, 16 tables, 17 triggers, shared guards bound correctly
+Read-only structural checks passed; run db:smoke + audit:db + audit:api for behavioral verification.

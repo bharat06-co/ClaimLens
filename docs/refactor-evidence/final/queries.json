@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "scripts/audit-queries.ts"
+  ],
+  "exitCode": 0,
+  "seconds": 0.74,
+  "configuration": "Disposable localhost:55433; no private .env"
+}

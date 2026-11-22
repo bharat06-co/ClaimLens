@@ -66,14 +66,21 @@ If `npm run doctor` shows DATABASE_URL failure, edit `.env` to match `compose.ya
 
 ### End-to-end demonstration
 
-1. Start PostgreSQL, run migrations and seed; explain all six SQL migrations, including `003_claim_state_integrity.sql` and `004_temporal_integrity.sql`.
+1. Start PostgreSQL, run migrations and seed; explain the SQL migrations, including `003_claim_state_integrity.sql` and `004_temporal_integrity.sql`.
 2. Sign in as **customer**. Open dashboard, inspect the pre-registered fictional laptop, or register another fictional product; create a claim and add an optional evidence URL.
 3. Sign out and sign in as **officer**. Filter the claim queue by status or search by serial number.
 4. Open a `submitted` claim; choose **Assign to me**. Confirm `submitted -> in_review` and the assignment audit record.
 5. Click **Run semantic search** and inspect ranked passages from the linked policy; explain that cosine similarity is not an approval probability.
 6. Record an **approved** or **rejected** decision with a substantive explanation. Confirm the claim state and the audit entry. If approved, the database trigger automatically creates an `open` repair order; progress it through `in_progress -> completed`.
 7. View an officer policy page and ingest additional policy text; show document chunk count and embedding model/metadata.
-8. Run `npm run db:smoke` and `db/queries_for_viva.sql` using a SQL client to demonstrate PK/FK/constraints, JOIN, HAVING, grouping, subqueries, indexing, views and triggers. All smoke-test mutations are rolled back.
+8. Run `npm run db:smoke` to demonstrate database integrity and claim workflow checks. All smoke-test mutations are rolled back.
+
+### Dashboard feature demos
+
+- **Customer warranty expiry watch.** Sign in as a customer and register a fictional product with a purchase date that puts the warranty end date within 30 days of today. Use the purchase date plus the selected policy's coverage term minus one day to calculate the end date. The dashboard lists your active warranties in order of expiry and shows **Expires today** when coverage ends today. Voided and expired warranties are excluded.
+- **Officer workload.** Submit a claim as the customer, then sign in as an officer. In **Open claim workload**, confirm the claim appears in the **Unassigned** row. Use **Assign to me** on the claim and return to the dashboard to see it under your officer name. Record a decision and confirm the open count drops. The **Open 7 days or more** column counts claims submitted at least seven days ago that are still awaiting review or in review.
+
+Both panels use the existing PostgreSQL tables. The expiry watch uses calendar-date arithmetic and customer ownership filtering. The workload groups open claims by officer and uses `COUNT(*) FILTER` and `MIN(submitted_at)` for the aging count and oldest submission.
 
 ### Source navigation
 
@@ -82,7 +89,6 @@ app/                     Next.js pages and backend API route handlers
 components/              Reusable forms, filters and widgets
 lib/                     PostgreSQL, role/session security, validation and embedding code
 db/migrations/           Relational schema, triggers, constraints, vector index
- db/queries_for_viva.sql SQL examples, including safe CREATE/ALTER/DROP exercise
 scripts/                 Migration, seed and transactional database verification
 tests/                   Unit tests
 docs/                    Architecture, relational schema, report, ER diagram, test plan
@@ -124,8 +130,8 @@ is pushed to GitHub. No CI passing status is claimed for the local source packag
 | SQL + vector database | PostgreSQL + pgvector, `document_chunks.embedding vector(384)` |
 | ER diagram and relational schema | `docs/er-diagram.png`, `docs/ER_DIAGRAM.dot`, `docs/DATA_DICTIONARY.md` |
 | PK, FK, CHECK, UNIQUE, DDL | `db/migrations/*.sql` |
-| INSERT, UPDATE, DELETE, SELECT | API routes, `db/queries_for_viva.sql` |
-| JOIN, GROUP BY, HAVING, ORDER BY, aggregates, subqueries | `v_claim_overview`, `v_claim_status_summary`, `queries_for_viva.sql` |
+| INSERT, UPDATE, DELETE, SELECT | API routes and SQL functions in `db/migrations/` |
+| JOIN, GROUP BY, ORDER BY, aggregates, subqueries | `v_claim_overview`, `v_claim_status_summary`, `components/OfficerWorkload.tsx` |
 | Four advanced SQL concepts | ACID transactions, stored functions, triggers, views, indexes (five), including database-enforced claim/repair state machines and immutable assignment records |
 | One advanced vector concept | HNSW index + cosine nearest-neighbor retrieval |
 | Next.js web interface and backend API | `app/`, `app/api/` |
